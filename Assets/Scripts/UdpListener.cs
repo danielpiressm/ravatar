@@ -71,6 +71,7 @@ public class UdpListener : MonoBehaviour {
                     // TMA: THe first char distinguishes between a BodyMessage and a CloudMessage
                   if(Convert.ToChar(toProcess[0]) == 'C')
                     {
+
                         string stringToParse = Encoding.ASCII.GetString(toProcess);
                         string[] splitmsg = stringToParse.Split(MessageSeparators.L0);
                         message.set(splitmsg[1], toProcess,splitmsg[0].Length);

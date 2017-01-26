@@ -6,7 +6,11 @@ Shader "Custom/Simple Billboard"
 	Properties 
 	{
 		_SpriteTex ("Base (RGB)", 2D) = "white" {}
+<<<<<<< HEAD
 		_Size ("Size", Range(0, 10)) = 0.03 //patch size
+=======
+		_Size ("Size", Range(0, 3)) = 0.03 //patch size
+>>>>>>> origin/master
 		_Color ("Color", Color) = (1, 1, 1, 0.2) 
 
 		_Dev ("Dev", Range(-5, 5)) = 0
@@ -21,8 +25,12 @@ Shader "Custom/Simple Billboard"
 	{
 		Pass
 		{
+<<<<<<< HEAD
 	
 			Tags {"RenderType"="Transparent"}
+=======
+			Tags { "RenderType"="Transparent" }
+>>>>>>> origin/master
 			LOD 200
 			
 			Cull Off // render both back and front faces
@@ -43,8 +51,11 @@ Shader "Custom/Simple Billboard"
 					float3	normal	: NORMAL;
 					float2  tex0	: TEXCOORD0;
 					float4 color	: COLOR;
+<<<<<<< HEAD
 					float depth : PSIZE;
 				
+=======
+>>>>>>> origin/master
 				};
 
 				struct FS_INPUT
@@ -73,7 +84,11 @@ Shader "Custom/Simple Billboard"
 				GS_INPUT VS_Main(appdata_full v)
 				{
 					GS_INPUT output = (GS_INPUT)0;
+<<<<<<< HEAD
 					output.depth = v.vertex.z;
+=======
+
+>>>>>>> origin/master
 					output.pos =  mul(unity_ObjectToWorld, v.vertex);
 					output.normal = v.normal;
 					output.tex0 = float2(0, 0);
@@ -92,19 +107,33 @@ Shader "Custom/Simple Billboard"
 					
 					float3 look = _WorldSpaceCameraPos - p[0].pos;	
 					
+<<<<<<< HEAD
 					float3 up =UNITY_MATRIX_IT_MV[1];
 					//float3 up = float3(0,1,0);
 					//if(abs(look.y) > abs(look.x) || abs(look.y) > abs(look.z))
 					//	up = float3(1,0,0);
 
 				//	look.y = 0;
+=======
+					float3 up =cross (look,UNITY_MATRIX_IT_MV[1].xyz);
+
+					//if(abs(look.y) > abs(look.x) || abs(look.y) > abs(look.z))
+					//	up = float3(1,0,0);
+
+					look.y = 0;
+>>>>>>> origin/master
 					look = normalize(look);
 					up = normalize(up);
 					float3 right = cross(up, look);
 					
 					
+<<<<<<< HEAD
 				//	float size = (p[0].depth*_Size)/351.00146192  ;
 					float size = 0.03;
+=======
+					float size = (p[0].pos.z*_Size)/351.00146192  ;
+					
+>>>>>>> origin/master
 					float halfS = 0.5f * size;
 
 							
@@ -128,12 +157,20 @@ Shader "Custom/Simple Billboard"
 
 					pIn.pos =  mul(vp, v[2]);
 					pIn.tex0 = float2(0.0f, 0.0f);
+<<<<<<< HEAD
 					pIn.color =p[0].color;
+=======
+					pIn.color = p[0].color;
+>>>>>>> origin/master
 					triStream.Append(pIn);
 
 					pIn.pos =  mul(vp, v[3]);
 					pIn.tex0 = float2(0.0f, 1.0f);
+<<<<<<< HEAD
 					pIn.color =p[0].color;
+=======
+					pIn.color = p[0].color;
+>>>>>>> origin/master
 					triStream.Append(pIn);
 				}
 
@@ -194,6 +231,7 @@ Shader "Custom/Simple Billboard"
 				//		t.a *= _Alpha;
 				//	else
 						t.a = _Alpha;
+<<<<<<< HEAD
 					//float  P=sqrt(t.r*t.r*0.299+t.g*t.g*0.587+t.b*t.b*0.114 ) ;
 
 					//float  P=sqrt(t.r) ;
@@ -201,6 +239,15 @@ Shader "Custom/Simple Billboard"
 					//t.r=P+((t.r)-P)*(saturation+0.3);
 					//t.g=P+((t.g)-P)*(saturation+0.3);
 					//t.b=P+((t.b)-P)*(saturation+0.3); 
+=======
+					float  P=sqrt(t.r*t.r*0.299+t.g*t.g*0.587+t.b*t.b*0.114 ) ;
+
+					//float  P=sqrt(t.r) ;
+
+					t.r=P+((t.r)-P)*(saturation+0.3);
+					t.g=P+((t.g)-P)*(saturation+0.3);
+					t.b=P+((t.b)-P)*(saturation+0.3); 
+>>>>>>> origin/master
 
 					return  t;
 

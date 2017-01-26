@@ -116,9 +116,11 @@ public class Tracker : MonoBehaviour
             float rz = float.Parse(chunks[6]);
             float rw = float.Parse(chunks[7]);
 
+
            
             GameObject cloudobj = new GameObject(id);
    
+
             cloudobj.transform.localPosition = new Vector3(px,py,pz);
             cloudobj.transform.localRotation = new Quaternion(rx,ry,rz,rw);
             cloudobj.transform.localScale = new Vector3(-1, 1, 1);

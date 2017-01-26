@@ -410,11 +410,14 @@ Prefab:
       propertyPath: m_RootOrder
       value: 13
       objectReference: {fileID: 0}
+<<<<<<< HEAD
     - target: {fileID: 114147672337849544, guid: 1736f1865ac24894196103ed6be01b05,
         type: 2}
       propertyPath: configFilename
       value: configSettings.txt
       objectReference: {fileID: 0}
+=======
+>>>>>>> origin/master
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1736f1865ac24894196103ed6be01b05, type: 2}
   m_IsPrefabParent: 0

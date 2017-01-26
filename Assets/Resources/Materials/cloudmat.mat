@@ -120,7 +120,8 @@ Material:
       second: 0.08
     - first:
         name: _Size
-      second: 3
+
+      second: 0.2
     - first:
         name: _SrcBlend
       second: 1
