@@ -138,10 +138,11 @@ public class TestTask : MonoBehaviour {
             if(currentTask == Tasks.Task2)
             {
                 UpdateReport();
-                currentTask = Tasks.Completed;
+                currentTask = Tasks.Task3;
                 objectsTask2.SetActive(false);
-                Debug.Log("TEST OVER");
-                CompleteReport();
+                objectsTask3.SetActive(true);
+                //Debug.Log("TEST OVER");
+                //CompleteReport();
             }
         }
 
@@ -156,7 +157,9 @@ public class TestTask : MonoBehaviour {
             }
             else if(currentTask == Tasks.Task3)
             {
-
+                UpdateReport();
+                currentTask = Tasks.Completed;
+                CompleteReport();
             }
         }
     }
