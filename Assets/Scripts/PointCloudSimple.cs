@@ -34,7 +34,8 @@ public class PointCloudSimple : MonoBehaviour {
     Vector3[] posBucket;
     Color[] colBucket;
     byte[] buffer;
-  
+
+    public float lastTime;
 
     [StructLayout(LayoutKind.Explicit)]
     struct UnionArray

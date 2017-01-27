@@ -13,7 +13,7 @@ public class Tracker : MonoBehaviour
 
 	private Dictionary<string, PointCloudSimple> _clouds;
     private Dictionary<string, GameObject> _cloudGameObjects;
-
+    public float cloudTTL = 0.33f;
 
     void Awake ()
 	{
@@ -30,6 +30,15 @@ public class Tracker : MonoBehaviour
         udp.Send(data, data.Length, remoteEndPoint);
     }
     
+    void Update()
+    {
+        foreach(PointCloudSimple c in _clouds.Values)
+        {
+            if (Time.unscaledTime - c.lastTime > cloudTTL)
+
+                c.hideFromView();
+        }
+    }
 
 	internal void setNewCloud (CloudMessage cloud)
 	{
@@ -48,6 +57,7 @@ public class Tracker : MonoBehaviour
 
         if (_clouds.ContainsKey(KinectId))
         {
+            _clouds[KinectId].lastTime = Time.unscaledTime;
             if (pdu[2] == "") {
                 _clouds[KinectId].setToView();
             }
