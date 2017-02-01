@@ -1,15 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.IO;
 
 public enum Tasks { Task1, Task2, Task3, Completed };
 
 public enum BodyLog { head, hip, torso, rightHand, leftHand, rightFoot, leftFoot, rightShin, leftShin };
 
+public enum AvatarType { carlFirstPerson, carlThirdPerson, robotFirstPerson, robotThirdPerson, pointCloudFirstPerson, pointCloudThirdPerson };
+
 public class TestTask : MonoBehaviour {
+
+    public AvatarType avatarType;
 
     public string collisionLogfileName = "collisionLog";
     public string logFileName = "log";
     public string pathLogFileName = "logPath";
+
+    private string pathDirectory = "";
 
     private string collisionLogStr = "";
     private string logStr = "";
@@ -57,6 +64,21 @@ public class TestTask : MonoBehaviour {
         lastPos = _trackedObj.transform.position;
         InitializeReport();
         InitializeFullbodyReport();
+        int i = 1;
+        
+        while(Directory.Exists(Directory.GetCurrentDirectory()+"/user"+i+avatarType.ToString()))
+        {
+            i++;
+        }
+        //se nao houver diretorios
+        
+        System.IO.Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/user"+i+ avatarType.ToString());
+        pathDirectory = Directory.GetCurrentDirectory() + "/user" + i + avatarType.ToString() + "/";
+            
+        
+        
+        
+        Debug.Log("log");
 	}
 	
 	// Update is called once per frame
@@ -85,19 +107,20 @@ public class TestTask : MonoBehaviour {
     void CompleteReport()
     {
         
-        System.IO.File.WriteAllText(collisionLogfileName + ".csv",collisionLogStr);
-        System.IO.File.WriteAllText(logFileName + ".csv", logStr);
+        
+        System.IO.File.WriteAllText( pathDirectory+"/"+ collisionLogfileName + ".csv",collisionLogStr);
+        System.IO.File.WriteAllText( pathDirectory+"/"+logFileName + ".csv", logStr);
         if(fullbodyLog)
         {
             for (int i = 0; i < 9; i++)
             {
-                System.IO.File.WriteAllText(bodyStrPath[i], bodyStr[i]);
+                System.IO.File.WriteAllText(pathDirectory + "/" + bodyStrPath[i], bodyStr[i]);
             }
             
         }
         else
         {
-            System.IO.File.WriteAllText(pathLogFileName + ".csv", pathStr);
+            System.IO.File.WriteAllText(pathDirectory + "/" + pathLogFileName + ".csv", pathStr);
         }
         
       
