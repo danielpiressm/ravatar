@@ -2,7 +2,7 @@
 using System.Collections;
 using System.IO;
 
-public enum Tasks { Task1, Task2, Task3, Completed };
+public enum Tasks { Task1, Task2, Task3, Task4, ReachRedLollipop1stTime, ReachRedLollipop2ndTime, ReachGreenLollipop1stTime, ReachGreenLollipop2ndTime, Completed };
 
 public enum BodyLog { head, hip, torso, rightHand, leftHand, rightFoot, leftFoot, rightShin, leftShin };
 
@@ -415,33 +415,65 @@ public class TestTask : MonoBehaviour {
 
     void nextTask(string triggerId)
     {
-        if(triggerId == "1")
+        if(triggerId == "walkTrigger1")
         {
             if(currentTask == Tasks.Task2)
             {
                 UpdateReport();
-                currentTask = Tasks.Task3;
-                objectsTask2.SetActive(false);
-                objectsTask3.SetActive(true);
+                currentTask = Tasks.ReachGreenLollipop1stTime;
+                Debug.Log(currentTask.ToString());
+                //objectsTask2.SetActive(false);
+                //objectsTask3.SetActive(true);
                 //Debug.Log("TEST OVER");
                 //CompleteReport();
             }
         }
 
-        if(triggerId == "2")
+        if(triggerId == "walkTrigger2")
         {
             if(currentTask == Tasks.Task1)
             {
                 UpdateReport();
-                currentTask = Tasks.Task2;
-                SetActiveChildren(objectsTask1,false);
-                SetActiveChildren(objectsTask2, true);
+                currentTask = Tasks.ReachRedLollipop1stTime;
+                Debug.Log(currentTask.ToString());
             }
             else if(currentTask == Tasks.Task3)
             {
                 UpdateReport();
+                currentTask = Tasks.ReachRedLollipop2ndTime;
+                Debug.Log(currentTask.ToString());
+
+                //currentTask = Tasks.Completed;
+                //CompleteReport();
+            }
+        }
+        if(triggerId == "redLollipop")
+        {
+            if(currentTask == Tasks.ReachRedLollipop1stTime)
+            {
+                UpdateReport();
+                currentTask = Tasks.Task2;
+                SetActiveChildren(objectsTask1, false);
+                SetActiveChildren(objectsTask2, true);
+                Debug.Log(currentTask.ToString());
+            }
+            else if(currentTask == Tasks.ReachRedLollipop2ndTime)
+            {
                 currentTask = Tasks.Completed;
+                Debug.Log("Completed");
+                SetActiveChildren(objectsTask3, false);
                 CompleteReport();
+                //throwing objectsToBeImplemented
+            }
+        }
+        else if(triggerId == "greenLollipop")
+        {
+            if(currentTask == Tasks.ReachGreenLollipop1stTime)
+            {
+                UpdateReport();
+                currentTask = Tasks.Task3;
+                SetActiveChildren(objectsTask2, false);
+                SetActiveChildren(objectsTask3, true);
             }
         }
     }
