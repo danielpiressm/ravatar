@@ -6,7 +6,7 @@ using System.Collections;
 /// This class is responsible for updating the caracter head 
 /// rotation according to the HMD (Head Mounted Display) rotation.
 /// </summary>
-public class HeadCameraController : MonoBehaviour 
+public class HeadCameraController : MonoBehaviour
 {
     public Vector3 threshold;
     public Transform CarlHip;
@@ -16,16 +16,21 @@ public class HeadCameraController : MonoBehaviour
     public bool thirdPerson;
 
     private Transform pivot1st;
+    private Transform pivot1stAux;
     private Transform pivot3rd;
     private Transform pivot3rdAux;
 
     void Start()
     {
         GameObject go = new GameObject();
-        pivot1st = go.transform;
-        pivot1st.parent = headTransform;
-        pivot1st.localPosition = threshold;
+        pivot1stAux = go.transform;
+        pivot1stAux.parent = headTransform;
+        pivot1stAux.localPosition = Vector3.zero;
 
+        go = new GameObject();
+        pivot1st = go.transform;
+        pivot1st.parent = pivot1stAux;
+        pivot1st.localPosition = threshold;
 
         go = new GameObject();
         pivot3rdAux = go.transform;
@@ -38,21 +43,21 @@ public class HeadCameraController : MonoBehaviour
         pivot3rd.localPosition = new Vector3(0, 0, -1); // PARAMETRIZAR
     }
 
- 	void LateUpdate()
-	{
+    void LateUpdate()
+    {
 
 
         CarlHip.position = new Vector3(UnityEngine.VR.InputTracking.GetLocalPosition(UnityEngine.VR.VRNode.Head).x,
             CarlHip.position.y,
             UnityEngine.VR.InputTracking.GetLocalPosition(UnityEngine.VR.VRNode.Head).z);
 
-        pivot3rdAux.rotation = UnityEngine.VR.InputTracking.GetLocalRotation(UnityEngine.VR.VRNode.CenterEye);
+        pivot3rdAux.rotation = /*pivot1stAux.rotation =*/ UnityEngine.VR.InputTracking.GetLocalRotation(UnityEngine.VR.VRNode.CenterEye);
         pivot3rdAux.eulerAngles = new Vector3(0, pivot3rd.eulerAngles.y, 0);
 
-        this.transform.position = new Vector3((-UnityEngine.VR.InputTracking.GetLocalPosition(UnityEngine.VR.VRNode.Head).x),
-                 (-UnityEngine.VR.InputTracking.GetLocalPosition(UnityEngine.VR.VRNode.Head).y),
-                 (-UnityEngine.VR.InputTracking.GetLocalPosition(UnityEngine.VR.VRNode.Head).z)) +
-                 (thirdPerson? pivot3rd.position : pivot1st.position);
+        this.transform.position = new Vector3((-UnityEngine.VR.InputTracking.GetLocalPosition(UnityEngine.VR.VRNode.CenterEye).x),
+                 (-UnityEngine.VR.InputTracking.GetLocalPosition(UnityEngine.VR.VRNode.CenterEye).y),
+                 (-UnityEngine.VR.InputTracking.GetLocalPosition(UnityEngine.VR.VRNode.CenterEye).z)) +
+                 (thirdPerson ? pivot3rd.position : pivot1st.position);
 
     }
 }
