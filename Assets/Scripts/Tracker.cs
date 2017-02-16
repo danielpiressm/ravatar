@@ -13,7 +13,7 @@ public class Tracker : MonoBehaviour
 
 	private Dictionary<string, PointCloudSimple> _clouds;
     private Dictionary<string, GameObject> _cloudGameObjects;
-    public float cloudTTL = 0.33f;
+
 
     void Awake ()
 	{
@@ -30,15 +30,6 @@ public class Tracker : MonoBehaviour
         udp.Send(data, data.Length, remoteEndPoint);
     }
     
-    void Update()
-    {
-        foreach(PointCloudSimple c in _clouds.Values)
-        {
-            if (Time.unscaledTime - c.lastTime > cloudTTL)
-
-                c.hideFromView();
-        }
-    }
 
 	internal void setNewCloud (CloudMessage cloud)
 	{
@@ -52,23 +43,34 @@ public class Tracker : MonoBehaviour
        
 
         string KinectId = pdu[0]; 
-        int  id = int.Parse(pdu[1]);
+        uint  id = uint.Parse(pdu[1]);
         step += pdu[0].Length + pdu[1].Length;
 
         if (_clouds.ContainsKey(KinectId))
         {
-            _clouds[KinectId].lastTime = Time.unscaledTime;
             if (pdu[2] == "") {
                 _clouds[KinectId].setToView();
             }
             else
-                _clouds[KinectId].setPoints(cloud.receivedBytes,step,id);
+                _clouds[KinectId].setPoints(cloud.receivedBytes,step,id,cloud.receivedBytes.Length);
         }
     }
-    
-    
 
-	private void _loadConfig ()
+    //FOR TCP
+    internal void setNewCloud(string KinectID, byte[] data,int size)
+    {
+     
+         // tirar o id da mensagem que é um int
+        if (_clouds.ContainsKey(KinectID))
+        {
+            byte[] idb = { data[0], data[1], data[2], data[3] };
+            uint id = BitConverter.ToUInt32(idb, 0);
+            _clouds[KinectID].setPoints(data, 4, id,size);
+            _clouds[KinectID].setToView();
+        }
+    }
+
+    private void _loadConfig ()
 	{
 		string filePath = Application.dataPath + "/" + TrackerProperties.Instance.configFilename;
 
@@ -115,7 +117,6 @@ public class Tracker : MonoBehaviour
     {
         foreach (string s in av.calibrations)
         {
-
             string[] chunks = s.Split(';');
             string id = chunks[0];
             float px = float.Parse(chunks[1]);
@@ -126,11 +127,7 @@ public class Tracker : MonoBehaviour
             float rz = float.Parse(chunks[6]);
             float rw = float.Parse(chunks[7]);
 
-
-           
             GameObject cloudobj = new GameObject(id);
-   
-
             cloudobj.transform.localPosition = new Vector3(px,py,pz);
             cloudobj.transform.localRotation = new Quaternion(rx,ry,rz,rw);
             cloudobj.transform.localScale = new Vector3(-1, 1, 1);
