@@ -21,8 +21,8 @@ Shader "Custom/Simple Billboard"
 	{
 		Pass
 		{
-
-			Tags { "RenderType"="Transparent" }
+	
+			Tags {"RenderType"="Transparent"}
 			LOD 200
 			
 			Cull Off // render both back and front faces
@@ -91,6 +91,7 @@ Shader "Custom/Simple Billboard"
 					
 					
 					float3 look = _WorldSpaceCameraPos - p[0].pos;	
+					
 					float3 up =UNITY_MATRIX_IT_MV[1];
 					//float3 up = float3(0,1,0);
 					//if(abs(look.y) > abs(look.x) || abs(look.y) > abs(look.z))
@@ -101,9 +102,9 @@ Shader "Custom/Simple Billboard"
 					up = normalize(up);
 					float3 right = cross(up, look);
 					
-		
+					
 					//float size = (p[0].depth*_Size)/351.00146192  ;
-					float size = 0.01;
+					float size = _Size;
 					float halfS = 0.5f * size;
 
 							
@@ -127,12 +128,12 @@ Shader "Custom/Simple Billboard"
 
 					pIn.pos =  mul(vp, v[2]);
 					pIn.tex0 = float2(0.0f, 0.0f);
-					pIn.color = p[0].color;
+					pIn.color =p[0].color;
 					triStream.Append(pIn);
 
 					pIn.pos =  mul(vp, v[3]);
 					pIn.tex0 = float2(0.0f, 1.0f);
-					pIn.color = p[0].color;
+					pIn.color =p[0].color;
 					triStream.Append(pIn);
 				}
 
@@ -172,7 +173,7 @@ Shader "Custom/Simple Billboard"
 
 					//ycenters and xcenters
 					
-					float alpha = gaussianTheta(uv.x, 0.5,uv.y,0.5,0.017,0.5,0.5,_Gamma,0);
+					float alpha = gaussianTheta(uv.x, 0.5,uv.y,0.5,0.017,0.5,0.5,2,0);
 
 					
 					
@@ -193,15 +194,13 @@ Shader "Custom/Simple Billboard"
 				//		t.a *= _Alpha;
 				//	else
 						t.a = _Alpha;
-
 					float  P=sqrt(t.r*t.r*0.299+t.g*t.g*0.587+t.b*t.b*0.114 ) ;
 
 					//float  P=sqrt(t.r) ;
 
-					t.r=P+((t.r)-P)*(saturation+0.4);
-					t.g=P+((t.g)-P)*(saturation+0.4);
-					t.b=P+((t.b)-P)*(saturation+0.4); 
-
+					t.r=P+((t.r)-P)*(saturation+0.3);
+					t.g=P+((t.g)-P)*(saturation+0.3);
+					t.b=P+((t.b)-P)*(saturation+0.3); 
 
 					return  t;
 
