@@ -25,7 +25,7 @@ public class Trigger : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        SendMessageUpwards("nextTask", triggerId);
         Debug.Log("Contact " + other.contactOffset);
+        SendMessageUpwards("nextTask", triggerId);
     }
 }

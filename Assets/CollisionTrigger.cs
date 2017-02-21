@@ -36,6 +36,7 @@ public class CollisionTrigger : MonoBehaviour {
         lastTime = currentTime;
         Vector3 pos = new Vector3(collider.transform.position.x, collider.transform.position.y, collider.transform.position.z);
         Vector3 vec = collider.transform.position - this.transform.position;
+        Debug.Log("Collision between  " + this.Id + " and " + collider.gameObject.name);
         string str = string.Join(",", new string[]
         {
             collider.gameObject.name,
