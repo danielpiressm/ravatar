@@ -149,6 +149,7 @@ public class TrackerClient : MonoBehaviour
 	private void UpdateAvatarBody()
 	{
 		ApplyFilterToJoints();
+      //  Vector3 headRot = UnityEngine.VR.InputTracking.GetLocalRotation(UnityEngine.VR.VRNode.CenterEye).eulerAngles;
 
 		// Spine
 		Vector3 spineUp = Utils.GetBoneDirection(spineShoulderJoint.Value, spineBaseJoint.Value);
