@@ -12,7 +12,7 @@ public class HeadCameraController : MonoBehaviour
     //public Transform CarlHip;
 
     public Transform headTransform;
-
+    public GameObject character;
     public bool thirdPerson;
 
     private Transform pivot1st;
@@ -22,27 +22,34 @@ public class HeadCameraController : MonoBehaviour
 
     void Start()
     {
-        TrackerClientSimpleRobot tcsr = GetComponentInParent<TrackerClientSimpleRobot>();
+        TrackerClientSimpleRobot tcsr = null;
+        if (character != null)
+        tcsr = character.GetComponent<TrackerClientSimpleRobot>();
 
-        GameObject go = new GameObject();
+        GameObject go = new GameObject("pivot1stAux");
         pivot1stAux = go.transform;
         pivot1stAux.parent = tcsr == null? headTransform : tcsr.getHead();
         pivot1stAux.localPosition = Vector3.zero;
+        pivot1stAux.localScale = Vector3.one;
 
-        go = new GameObject();
+        go = new GameObject("pivot1st");
         pivot1st = go.transform;
         pivot1st.parent = pivot1stAux;
         pivot1st.localPosition = threshold;
+        pivot1st.localScale = Vector3.one;
 
-        go = new GameObject();
+        go = new GameObject("pivot3rdAux");
         pivot3rdAux = go.transform;
         pivot3rdAux.parent = tcsr == null ? headTransform : tcsr.getHead();
         pivot3rdAux.localPosition = new Vector3(0, 2.54f, 0); // PARAMETRIZAR
+        pivot3rdAux.localScale = Vector3.one;
 
-        go = new GameObject();
+        go = new GameObject("pivot3rd");
         pivot3rd = go.transform;
         pivot3rd.parent = pivot3rdAux;
         pivot3rd.localPosition = new Vector3(0, 0, -1); // PARAMETRIZAR
+        pivot3rd.localScale = Vector3.one;
+
     }
 
     void LateUpdate()

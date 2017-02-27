@@ -145,6 +145,9 @@ public class TrackerClientSimpleRobot : MonoBehaviour
     Transform createAvatarJoint(Transform parent, float scale = ballSize)
     {
         GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        Rigidbody r = gameObject.AddComponent<Rigidbody>();
+        r.isKinematic = true;
+        r.useGravity = false;
         Transform transform = gameObject.transform;
         transform.parent = parent;
         transform.localScale *= scale;
@@ -219,10 +222,14 @@ public class TrackerClientSimpleRobot : MonoBehaviour
 	{
 		ApplyFilterToJoints();
 
-		// Spine
+        Vector3 spineUp = Utils.GetBoneDirection(spineShoulderJoint.Value, spineBaseJoint.Value);
+        Vector3 spineRight = Utils.GetBoneDirection(rightShoulderJoint.Value, leftShoulderJoint.Value);
+        Vector3 spineForward = Vector3.Cross(spineRight, spineUp);
+        // Spine
         spineBase.position = spineBaseJoint.Value;
         spineShoulder.position = spineShoulderJoint.Value;
         head.position = headJoint.Value;
+        head.rotation = Quaternion.LookRotation(spineForward, spineUp);
 
         // Left Arm
         leftShoulder.position = leftShoulderJoint.Value;

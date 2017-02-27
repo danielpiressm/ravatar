@@ -9,8 +9,10 @@ public class ObjectShooter : MonoBehaviour {
     bool shot3 = false;
     bool shot4 = false;
     public GameObject ball = null;
+    public int increment = 2;
+    public GameObject cannon = null;
     // Use this for initialization
-    float elapsedTime = 0;
+    float elapsedTime = -3;
 	void Start () {
         Debug.Log("Object shooter online!");
 	}
@@ -18,38 +20,43 @@ public class ObjectShooter : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         elapsedTime += Time.deltaTime;
-        if(!shot1 && elapsedTime > 1)
+        if(!shot1 && elapsedTime > increment)
         {
-            GameObject s = Instantiate(ball, this.transform.position, Quaternion.identity);
-            s.GetComponent<Rigidbody>().AddForce(new Vector3(0.4f,1.2f,1.0f) * 35);
+            GameObject s = Instantiate(ball, cannon.transform.position, Quaternion.identity);
+            s.transform.parent = this.transform.parent.transform.parent;
+            s.GetComponent<Rigidbody>().AddForce(new Vector3(0.1f,1.05f,1.0f) * 35);
             shot1 = true;
             Debug.Log("Shooting ball one");
         }
-        if (!shot2 && elapsedTime > 2)
+        if (!shot2 && elapsedTime > 2*increment)
         {
-            GameObject s = Instantiate(ball, this.transform.position, Quaternion.identity);
-            s.GetComponent<Rigidbody>().AddForce(new Vector3(0.6f, 1.2f, 1.0f) * 35);
+            GameObject s = Instantiate(ball, cannon.transform.position, Quaternion.identity);
+            s.transform.parent = this.transform.parent.transform.parent;
+            s.GetComponent<Rigidbody>().AddForce(new Vector3(-0.05f, 1.05f, 1.0f) * 35);
             shot2 = true;
             Debug.Log("Shooting ball two");
         }
-        if (!shot3 && elapsedTime > 3)
+        if (!shot3 && elapsedTime > 3*increment)
         {
-            GameObject s = Instantiate(ball, this.transform.position, Quaternion.identity);
-            s.GetComponent<Rigidbody>().AddForce(new Vector3(0.4f, 1f, 1.0f) * 35);
+            GameObject s = Instantiate(ball, cannon.transform.position, Quaternion.identity);
+            s.transform.parent = this.transform.parent.transform.parent;
+            s.GetComponent<Rigidbody>().AddForce(new Vector3(0.1f, 1.15f, 1.0f) * 35);
             shot3 = true;
             Debug.Log("Shooting ball three");
         }
-        if (!shot4 && elapsedTime > 4)
+        if (!shot4 && elapsedTime > 4*increment)
         {
-            GameObject s = Instantiate(ball, this.transform.position, Quaternion.identity);
-            s.GetComponent<Rigidbody>().AddForce(new Vector3(0.6f, 1f, 1.0f) * 35);
+            GameObject s = Instantiate(ball, cannon.transform.position, Quaternion.identity);
+            s.transform.parent = this.transform.parent.transform.parent;
+            s.GetComponent<Rigidbody>().AddForce(new Vector3(-0.05f, 1.15f, 1.0f) * 35);
             shot4 = true;
             Debug.Log("Shooting ball four");
         }
-        if(elapsedTime > 5)
+        if(elapsedTime > 5*increment)
         {
-            shot1 = shot2 = shot3 = shot4 = false;
-            elapsedTime = 0;
+           // shot1 = shot2 = shot3 = shot4 = false;
+           // elapsedTime = 0;
+            SendMessageUpwards("nextTask", "objectShooter");
         }
     }
 }

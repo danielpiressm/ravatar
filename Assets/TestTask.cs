@@ -2,7 +2,7 @@
 using System.Collections;
 using System.IO;
 
-public enum Tasks { Task1, Task2, Task3, Task4, ReachRedLollipop1stTime, ReachRedLollipop2ndTime, ReachGreenLollipop1stTime, ReachGreenLollipop2ndTime, Completed };
+public enum Tasks { Task1, Task2, Task3, Task4, ReachRedLollipop1stTime, ReachRedLollipop2ndTime, ReachGreenLollipop1stTime, ReachGreenLollipop2ndTime, ThrowingObjects, Completed };
 
 public enum BodyLog { head, hip, torso, rightHand, leftHand, rightFoot, leftFoot, rightShin, leftShin };
 
@@ -30,6 +30,7 @@ public class TestTask : MonoBehaviour {
     public GameObject objectsTask1; 
     public GameObject objectsTask2;
     public GameObject objectsTask3;
+    public GameObject objectTask4;
 
     Vector3 lastPos;
 
@@ -83,15 +84,16 @@ public class TestTask : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (currentTask != Tasks.Completed)
+        if (currentTask != Tasks.Completed )
         {
             UpdatePathReport();
         }
+        
     }
 
     void serializeCollision(string str)
     {
-        //TODO: implement this
+        Debug.Log("&&" + str);
     }
 
 
@@ -132,6 +134,8 @@ public class TestTask : MonoBehaviour {
         logStr += currentTask.ToString() + "," + (currentTime - lastTimeBetweenTasks)+"\n";
         lastTimeBetweenTasks = currentTime;
     }
+
+    
 
     void InitializeFullbodyReport()
     {
@@ -399,10 +403,7 @@ public class TestTask : MonoBehaviour {
         }
     }
 
-    void serializeCollision( )
-    {
-
-    }
+    
 
     void SetActiveChildren(GameObject obj, bool state)
     {
@@ -459,9 +460,10 @@ public class TestTask : MonoBehaviour {
             }
             else if(currentTask == Tasks.ReachRedLollipop2ndTime)
             {
-                currentTask = Tasks.Completed;
-                Debug.Log("Completed");
+                currentTask = Tasks.ThrowingObjects;
+                Debug.Log("Start Throwing Object Task");
                 SetActiveChildren(objectsTask3, false);
+                SetActiveChildren(objectTask4,true);
                 CompleteReport();
                 //throwing objectsToBeImplemented
             }
@@ -474,6 +476,15 @@ public class TestTask : MonoBehaviour {
                 currentTask = Tasks.Task3;
                 SetActiveChildren(objectsTask2, false);
                 SetActiveChildren(objectsTask3, true);
+            }
+        }
+        else if( triggerId == "objectShooter")
+        {
+            if(currentTask == Tasks.ThrowingObjects)
+            {
+                SetActiveChildren(objectTask4, false);
+                CompleteReport();
+                currentTask = Tasks.Completed;
             }
         }
     }

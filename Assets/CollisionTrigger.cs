@@ -20,14 +20,7 @@ public class CollisionTrigger : MonoBehaviour {
         return vec.x + separator + vec.y + separator + vec.z;
     }
 
-    void OnCollisionEnter(Collision collision)
-    {
-        //collision.contacts
-        string str;
-        str = Vec3ToStr(new Vector3(),";");
-       // SendMessageUpwards("serializeCollision", str);
-
-    }
+    
 
     void OnTriggerEnter(Collider collider)
     {
@@ -48,7 +41,31 @@ public class CollisionTrigger : MonoBehaviour {
             this.transform.position.y.ToString(),
             this.transform.position.z.ToString()+"\n"
         });
+        SendMessageUpwards("serializeCollision", str);
+        
 
+    }
+
+    void OnCollisionEnter(Collision collider)
+    {
+        float currentTime = Time.realtimeSinceStartup;
+        float triggerTime = currentTime - lastTime;
+        lastTime = currentTime;
+        Vector3 pos = new Vector3(collider.transform.position.x, collider.transform.position.y, collider.transform.position.z);
+        Vector3 vec = collider.transform.position - collider.contacts[0].thisCollider.gameObject.transform.position;
+        Debug.Log("$$Collision between  " + this.Id + " and " + collider.gameObject.name);
+        string str = string.Join(",", new string[]
+        {
+            collider.gameObject.name,
+            this.Id,
+            pos.x.ToString(),
+            pos.y.ToString(),
+            pos.z.ToString(),
+            this.transform.position.x.ToString(),
+            this.transform.position.y.ToString(),
+            this.transform.position.z.ToString()+"\n"
+        });
+        SendMessageUpwards("serializeCollision", str);
 
     }
 
