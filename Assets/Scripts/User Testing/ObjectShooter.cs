@@ -24,6 +24,8 @@ public class ObjectShooter : MonoBehaviour {
         {
             GameObject s = Instantiate(ball, cannon.transform.position, Quaternion.identity);
             s.transform.parent = this.transform.parent.transform.parent;
+            float currentTime = Time.realtimeSinceStartup;
+            SendMessageUpwards("logBallThrow", currentTime);
             s.GetComponent<Rigidbody>().AddForce(new Vector3(0.1f,1.05f,1.0f) * 35);
             shot1 = true;
             Debug.Log("Shooting ball one");
@@ -32,6 +34,8 @@ public class ObjectShooter : MonoBehaviour {
         {
             GameObject s = Instantiate(ball, cannon.transform.position, Quaternion.identity);
             s.transform.parent = this.transform.parent.transform.parent;
+            float currentTime = Time.realtimeSinceStartup;
+            SendMessageUpwards("logBallThrow", currentTime);
             s.GetComponent<Rigidbody>().AddForce(new Vector3(-0.05f, 1.05f, 1.0f) * 35);
             shot2 = true;
             Debug.Log("Shooting ball two");
@@ -40,6 +44,8 @@ public class ObjectShooter : MonoBehaviour {
         {
             GameObject s = Instantiate(ball, cannon.transform.position, Quaternion.identity);
             s.transform.parent = this.transform.parent.transform.parent;
+            float currentTime = Time.realtimeSinceStartup;
+            SendMessageUpwards("logBallThrow", currentTime);
             s.GetComponent<Rigidbody>().AddForce(new Vector3(0.1f, 1.15f, 1.0f) * 35);
             shot3 = true;
             Debug.Log("Shooting ball three");
@@ -48,6 +54,8 @@ public class ObjectShooter : MonoBehaviour {
         {
             GameObject s = Instantiate(ball, cannon.transform.position, Quaternion.identity);
             s.transform.parent = this.transform.parent.transform.parent;
+            float currentTime = Time.realtimeSinceStartup;
+            SendMessageUpwards("logBallThrow", currentTime);
             s.GetComponent<Rigidbody>().AddForce(new Vector3(-0.05f, 1.15f, 1.0f) * 35);
             shot4 = true;
             Debug.Log("Shooting ball four");

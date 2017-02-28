@@ -56,6 +56,7 @@ public class TestTask : MonoBehaviour {
 
     float lastTimeBetweenTasks = 0.0f;
     float lastTimeBetweenTriggers = 0.0f;
+    float lastTimeBetweenCollisions = 0.0f;
 
 	// Use this for initialization
 	void Start () {
@@ -93,7 +94,25 @@ public class TestTask : MonoBehaviour {
 
     void serializeCollision(string str)
     {
-        Debug.Log("&&" + str);
+        float currentTime = Time.realtimeSinceStartup;
+        logStr += currentTask.ToString() + "," + (currentTime - lastTimeBetweenCollisions) +  currentTime + "\n";
+        //lastTimeBetweenTasks = currentTime;
+        collisionLogStr += str;
+        //Debug.Log("&&" + str);
+    }
+
+    void serializeBallCollision(string str)
+    {
+        float currentTime = Time.realtimeSinceStartup;
+        logStr += currentTask.ToString() + "," + (currentTime - lastTimeBetweenCollisions) + currentTime + "\n";
+        //lastTimeBetweenTasks = currentTime;
+        collisionLogStr += str;
+        //Debug.Log("&&" + str);
+    }
+
+    void logBallThrow(float time)
+    {
+        float lastTimeBetweenCollisions = time;
     }
 
 
@@ -101,7 +120,7 @@ public class TestTask : MonoBehaviour {
     {
         collisionLogStr = "Joint" + separator + "PosX" + separator + "PosY" + separator + "PosZ" + separator + "RotX" + separator + "RotY" + separator + "RotZ" + separator +
                         "ColliderName" + separator + "PosColliderX" + separator + "PosColliderY" + separator + "PosColliderZ" + separator + "RotColliderX" + separator + "RotColliderZ" +
-                        "ErrorX" + separator + "ErrorY" + separator + "ErrorZ" + separator+ "TimeElapsed"+"\n";
+                        "ErrorX" + separator + "ErrorY" + separator + "ErrorZ" + separator+ "TimeElapsed"+ separator + "CurrentTime"+"\n";
         logStr = "TriggerNum" + separator + "Time" + "\n";
         pathStr = "Task,Trigger,currentPosX,currentPosY,currentPosZ,pathElapsedX,pathElapsedY,pathElapsedZ,rotX,rotY,rotZ,magnitude\n";
     }
