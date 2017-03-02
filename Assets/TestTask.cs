@@ -2,7 +2,7 @@
 using System.Collections;
 using System.IO;
 
-public enum Tasks { Task1, Task2, Task3, Task4, ReachRedLollipop1stTime, ReachRedLollipop2ndTime, ReachGreenLollipop1stTime, ReachGreenLollipop2ndTime, ThrowingObjects, Completed };
+public enum Tasks { Task1, Task2, Task3, Task4, ReachGreenLollipop0thTime, ReachRedLollipop1stTime, ReachRedLollipop2ndTime, ReachGreenLollipop1stTime, ReachGreenLollipop2ndTime, ThrowingObjects, Completed };
 
 public enum BodyLog { head, hip, torso, rightHand, leftHand, rightFoot, leftFoot, rightShin, leftShin };
 
@@ -57,10 +57,13 @@ public class TestTask : MonoBehaviour {
     float lastTimeBetweenTasks = 0.0f;
     float lastTimeBetweenTriggers = 0.0f;
     float lastTimeBetweenCollisions = 0.0f;
+    float startTime = 0.0f;
 
 	// Use this for initialization
 	void Start () {
-        currentTask = Tasks.Task1;
+        //currentTask = Tasks.Task1;
+        //uncomment this for the task
+        currentTask = Tasks.ReachGreenLollipop0thTime;
         //with avatars, change for torso tracking
         _trackedObj = Camera.main;
         lastPos = _trackedObj.transform.position;
@@ -97,7 +100,7 @@ public class TestTask : MonoBehaviour {
         float currentTime = Time.realtimeSinceStartup;
         logStr += currentTask.ToString() + "," + (currentTime - lastTimeBetweenCollisions) +  currentTime + "\n";
         //lastTimeBetweenTasks = currentTime;
-        collisionLogStr += str;
+        collisionLogStr += str + "\n";
         //Debug.Log("&&" + str);
     }
 
@@ -127,8 +130,8 @@ public class TestTask : MonoBehaviour {
 
     void CompleteReport()
     {
-        
-        
+
+        logStr += "TotalTime" + Time.realtimeSinceStartup;
         System.IO.File.WriteAllText( pathDirectory+"/"+ collisionLogfileName + ".csv",collisionLogStr);
         System.IO.File.WriteAllText( pathDirectory+"/"+logFileName + ".csv", logStr);
         if(fullbodyLog)
@@ -152,6 +155,8 @@ public class TestTask : MonoBehaviour {
         float currentTime = Time.realtimeSinceStartup;
         logStr += currentTask.ToString() + "," + (currentTime - lastTimeBetweenTasks)+"\n";
         lastTimeBetweenTasks = currentTime;
+        lastTimeBetweenCollisions = currentTime;
+        lastTimeBetweenTriggers = currentTime;
     }
 
     
@@ -442,6 +447,7 @@ public class TestTask : MonoBehaviour {
                 UpdateReport();
                 currentTask = Tasks.ReachGreenLollipop1stTime;
                 Debug.Log(currentTask.ToString());
+                
                 //objectsTask2.SetActive(false);
                 //objectsTask3.SetActive(true);
                 //Debug.Log("TEST OVER");
@@ -469,6 +475,7 @@ public class TestTask : MonoBehaviour {
         }
         if(triggerId == "redLollipop")
         {
+            
             if(currentTask == Tasks.ReachRedLollipop1stTime)
             {
                 UpdateReport();
@@ -479,6 +486,7 @@ public class TestTask : MonoBehaviour {
             }
             else if(currentTask == Tasks.ReachRedLollipop2ndTime)
             {
+                lastTimeBetweenCollisions = Time.realtimeSinceStartup;
                 currentTask = Tasks.ThrowingObjects;
                 Debug.Log("Start Throwing Object Task");
                 SetActiveChildren(objectsTask3, false);
@@ -489,7 +497,15 @@ public class TestTask : MonoBehaviour {
         }
         else if(triggerId == "greenLollipop")
         {
-            if(currentTask == Tasks.ReachGreenLollipop1stTime)
+            if (currentTask == Tasks.ReachGreenLollipop0thTime)
+            {
+                currentTask = Tasks.Task1;
+                SetActiveChildren(objectsTask1, true);
+                Debug.Log(currentTask.ToString());
+                lastTimeBetweenTasks = Time.realtimeSinceStartup;
+                startTime = lastTimeBetweenTasks;
+            }
+            if (currentTask == Tasks.ReachGreenLollipop1stTime)
             {
                 UpdateReport();
                 currentTask = Tasks.Task3;
