@@ -36,13 +36,13 @@ public class TestTask : MonoBehaviour {
 
     Camera _trackedObj;
 
-    public GameObject head;
-    public GameObject rightHand;
-    public GameObject leftHand;
-    public GameObject rightFoot;
-    public GameObject leftFoot;
-    public GameObject rightShin; //shin=canela
-    public GameObject leftShin;
+    public Transform head;
+    public Transform rightHand;
+    public Transform leftHand;
+    public Transform rightFoot;
+    public Transform leftFoot;
+    public Transform rightShin; //shin=canela
+    public Transform leftShin;
 
     private Vector3[] lastBodyPos;
     private string[] bodyStr;
@@ -161,46 +161,46 @@ public class TestTask : MonoBehaviour {
 
     
 
-    void InitializeFullbodyReport()
+    public void InitializeFullbodyReport()
     {
         lastBodyPos = new Vector3[9];
         bodyStrPath = new string[9];
         bodyStr = new string[9];
         if(rightFoot!=null)
         {
-            lastBodyPos[(int)BodyLog.rightFoot] = rightFoot.transform.position;
+            lastBodyPos[(int)BodyLog.rightFoot] = rightFoot.position;
             bodyStrPath[(int)BodyLog.rightFoot] = "rightFootLog.csv";
             //create a file for each part of the body
         }
         if(leftFoot!=null)
         {
             //log this
-            lastBodyPos[(int)BodyLog.leftFoot] = leftFoot.transform.position;
+            lastBodyPos[(int)BodyLog.leftFoot] = leftFoot.position;
             bodyStrPath[(int)BodyLog.leftFoot] = "leftFootLog.csv";
         }
         if(rightHand!=null)
         {
-            lastBodyPos[(int)BodyLog.rightHand] = rightHand.transform.position;
+            lastBodyPos[(int)BodyLog.rightHand] = rightHand.position;
             bodyStrPath[(int)BodyLog.rightHand] = "rightHandLog.csv";
         }
         if(leftHand!=null)
         {
-            lastBodyPos[(int)BodyLog.leftHand] = leftHand.transform.position;
+            lastBodyPos[(int)BodyLog.leftHand] = leftHand.position;
             bodyStrPath[(int)BodyLog.leftHand] = "leftHandLog.csv";
         }
         if(rightShin!=null)
         {
-            lastBodyPos[(int)BodyLog.rightShin] = rightShin.transform.position;
+            lastBodyPos[(int)BodyLog.rightShin] = rightShin.position;
             bodyStrPath[(int)BodyLog.rightShin] = "rightShinLog.csv";
         }
         if(leftShin!=null)
         {
-            lastBodyPos[(int)BodyLog.leftShin] = leftShin.transform.position;
+            lastBodyPos[(int)BodyLog.leftShin] = leftShin.position;
             bodyStrPath[(int)BodyLog.leftShin] = "leftShinLog.csv";
         }
         if(head!=null)
         {
-            lastBodyPos[(int)BodyLog.head] = head.transform.position;
+            lastBodyPos[(int)BodyLog.head] = head.position;
             bodyStrPath[(int)BodyLog.head] = "headLog.csv";
         }
         

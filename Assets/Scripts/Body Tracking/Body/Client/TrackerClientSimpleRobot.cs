@@ -73,6 +73,24 @@ public class TrackerClientSimpleRobot : MonoBehaviour
     private Transform boneLeftHip, boneLeftThigh, boneLeftCalf;
     private Transform boneRightHip, boneRightThigh, boneRightCalf;
 
+    public TestTask testTaskScript;
+
+    void AssignJointsForLogReasons()
+    {
+        if(testTaskScript)
+        {
+            testTaskScript.rightHand = rightElbow;
+            testTaskScript.leftHand = leftElbow;
+            testTaskScript.head = head;
+            testTaskScript.rightFoot = rightAnkle;
+            testTaskScript.leftFoot = leftAnkle;
+            //testTaskScript.rightShin =
+            //testTaskScript.leftShin = 
+            //testTaskScript.rightHand = rightF
+            testTaskScript.InitializeFullbodyReport();
+        }
+    }
+
     void Awake()
 	{
 		isNewFrame = false;
@@ -135,6 +153,8 @@ public class TrackerClientSimpleRobot : MonoBehaviour
         boneRightHip = createAvatarBone(avatarGo.transform);
         boneRightThigh = createAvatarBone(avatarGo.transform);
         boneRightCalf = createAvatarBone(avatarGo.transform);
+
+        AssignJointsForLogReasons();
     }
 
     public Transform getHead()
