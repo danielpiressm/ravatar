@@ -15,7 +15,7 @@ public class TrackerClient : MonoBehaviour
 	private Human trackedHuman;
 	private string trackedHumanId;
 	private Dictionary<string, Human> humans;
-
+    public Transform bar;
 	// Body transforms and joints
 
 	// Spine
@@ -58,6 +58,7 @@ public class TrackerClient : MonoBehaviour
 	private PointSmoothing rightHipJoint;
 	private PointSmoothing rightKneeJoint;
 	private PointSmoothing rightAnkleJoint;
+    private float bardifference = 0.12f;
 
 	void Start()
 	{
@@ -138,7 +139,7 @@ public class TrackerClient : MonoBehaviour
 
 		float userHeight = (trackedHuman.body.Joints[BodyJointType.head].y + 0.1f) - lowerFootY;
 		float scaleRatio = userHeight / avatarHeight;
-
+        bar.transform.position = new Vector3(bar.transform.position.x, userHeight - bardifference, bar.transform.position.z);
 		spineBase.transform.localScale = new Vector3(scaleRatio, scaleRatio, scaleRatio);
 	}
 
@@ -154,7 +155,7 @@ public class TrackerClient : MonoBehaviour
 		// Spine
 		Vector3 spineUp = Utils.GetBoneDirection(spineShoulderJoint.Value, spineBaseJoint.Value);
 		Vector3 spineRight = Utils.GetBoneDirection(rightShoulderJoint.Value, leftShoulderJoint.Value);
-		Vector3 spineForward = Vector3.Cross(spineRight, spineUp);
+		Vector3 spineForward = Vector3.Cross(spineRight,spineUp);
 
 		spineBase.position = spineBaseJoint.Value + new Vector3(0.0f, 0.15f, 0.0f);
 		spineBase.rotation = Quaternion.LookRotation(spineForward, spineUp);
