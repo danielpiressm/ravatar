@@ -17,6 +17,8 @@ public class TrackerClientSimpleRobot : MonoBehaviour
     public const float ballSize = 0.1f;
     public const float boneSize = 0.05f;
     public bool showHead = true;
+    public Transform bar;
+    private float bardifference = 0.12f;
 
     // Body transforms and joints
 
@@ -119,24 +121,24 @@ public class TrackerClientSimpleRobot : MonoBehaviour
 
         GameObject avatarGo = new GameObject();
 
-        spineBase = createAvatarJoint(avatarGo.transform);
-        spineShoulder = createAvatarJoint(avatarGo.transform);
-        head = createAvatarJoint(avatarGo.transform, 0.3f);
+        spineBase = createAvatarJoint(avatarGo.transform,"spineBase");
+        spineShoulder = createAvatarJoint(avatarGo.transform,"spineShoulder");
+        head = createAvatarJoint(avatarGo.transform,"head",0.3f);
         head.gameObject.GetComponent<Renderer>().enabled = showHead;
 
-        leftShoulder = createAvatarJoint(avatarGo.transform);
-        leftElbow = createAvatarJoint(avatarGo.transform);
-        leftArm = createAvatarJoint(avatarGo.transform);
-        leftHip = createAvatarJoint(avatarGo.transform);
-        leftKnee = createAvatarJoint(avatarGo.transform);
-        leftAnkle = createAvatarJoint(avatarGo.transform);
+        leftShoulder = createAvatarJoint(avatarGo.transform,"leftShoulder");
+        leftElbow = createAvatarJoint(avatarGo.transform,"leftElbow");
+        leftArm = createAvatarJoint(avatarGo.transform,"leftArm");
+        leftHip = createAvatarJoint(avatarGo.transform,"leftHip");
+        leftKnee = createAvatarJoint(avatarGo.transform,"leftKnee");
+        leftAnkle = createAvatarJoint(avatarGo.transform,"leftAnkle");
 
-        rightShoulder = createAvatarJoint(avatarGo.transform);
-        rightElbow = createAvatarJoint(avatarGo.transform);
-        rightArm = createAvatarJoint(avatarGo.transform);
-        rightHip = createAvatarJoint(avatarGo.transform);
-        rightKnee = createAvatarJoint(avatarGo.transform);
-        rightAnkle = createAvatarJoint(avatarGo.transform);
+        rightShoulder = createAvatarJoint(avatarGo.transform,"rightShoulder");
+        rightElbow = createAvatarJoint(avatarGo.transform,"rightElbow");
+        rightArm = createAvatarJoint(avatarGo.transform,"rightArm");
+        rightHip = createAvatarJoint(avatarGo.transform,"rightHip");
+        rightKnee = createAvatarJoint(avatarGo.transform,"rightKnee");
+        rightAnkle = createAvatarJoint(avatarGo.transform,"rightAnkle");
 
         boneNeck = createAvatarBone(avatarGo.transform);
         boneNeck.gameObject.GetComponent<Renderer>().enabled = showHead;
@@ -162,9 +164,10 @@ public class TrackerClientSimpleRobot : MonoBehaviour
         return head;
     }
 
-    Transform createAvatarJoint(Transform parent, float scale = ballSize)
+    Transform createAvatarJoint(Transform parent, string name, float scale = ballSize)
     {
         GameObject gameObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        gameObject.name = name;
         Rigidbody r = gameObject.AddComponent<Rigidbody>();
         r.isKinematic = true;
         r.useGravity = false;
@@ -201,9 +204,12 @@ public class TrackerClientSimpleRobot : MonoBehaviour
 			{
 				trackedHumanId = currentHumanId;
 				trackedHuman = humans[trackedHumanId];
-
-				//AdjustAvatarHeight();
-				InputTracking.Recenter();
+                float lowerFootY = Mathf.Min(trackedHuman.body.Joints[BodyJointType.rightFoot].y, trackedHuman.body.Joints[BodyJointType.leftFoot].y);
+                float userHeight = (trackedHuman.body.Joints[BodyJointType.head].y + 0.1f) - lowerFootY;
+                bar.transform.position = new Vector3(bar.transform.position.x, userHeight - bardifference, bar.transform.position.z);
+    
+                //AdjustAvatarHeight();
+                InputTracking.Recenter();
 			}
 		}
 

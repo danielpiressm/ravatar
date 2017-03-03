@@ -31,6 +31,7 @@ public class TestTask : MonoBehaviour {
     public GameObject objectsTask2;
     public GameObject objectsTask3;
     public GameObject objectTask4;
+    public GameObject pirulito;
 
     Vector3 lastPos;
 
@@ -98,7 +99,7 @@ public class TestTask : MonoBehaviour {
     void serializeCollision(string str)
     {
         float currentTime = Time.realtimeSinceStartup;
-        logStr += currentTask.ToString() + "," + (currentTime - lastTimeBetweenCollisions) +  currentTime + "\n";
+        logStr += currentTask.ToString() + "," + (currentTime - lastTimeBetweenCollisions) +  ","+ currentTime + "," + currentTask +  "\n";
         //lastTimeBetweenTasks = currentTime;
         collisionLogStr += str + "\n";
         //Debug.Log("&&" + str);
@@ -123,7 +124,7 @@ public class TestTask : MonoBehaviour {
     {
         collisionLogStr = "Joint" + separator + "PosX" + separator + "PosY" + separator + "PosZ" + separator + "RotX" + separator + "RotY" + separator + "RotZ" + separator +
                         "ColliderName" + separator + "PosColliderX" + separator + "PosColliderY" + separator + "PosColliderZ" + separator + "RotColliderX" + separator + "RotColliderZ" +
-                        "ErrorX" + separator + "ErrorY" + separator + "ErrorZ" + separator+ "TimeElapsed"+ separator + "CurrentTime"+"\n";
+                        "ErrorX" + separator + "ErrorY" + separator + "ErrorZ" + separator+ "TimeElapsed"+ separator + "CurrentTime"+ separator + "CurrentTask"+"\n";
         logStr = "TriggerNum" + separator + "Time" + "\n";
         pathStr = "Task,Trigger,currentPosX,currentPosY,currentPosZ,pathElapsedX,pathElapsedY,pathElapsedZ,rotX,rotY,rotZ,magnitude\n";
     }
@@ -491,6 +492,7 @@ public class TestTask : MonoBehaviour {
                 Debug.Log("Start Throwing Object Task");
                 SetActiveChildren(objectsTask3, false);
                 SetActiveChildren(objectTask4,true);
+                SetActiveChildren(pirulito, false);
                 CompleteReport();
                 //throwing objectsToBeImplemented
             }

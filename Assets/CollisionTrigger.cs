@@ -34,6 +34,8 @@ public class CollisionTrigger : MonoBehaviour {
         Vector3 rot = new Vector3(collider.transform.eulerAngles.x, collider.transform.eulerAngles.y, collider.transform.eulerAngles.z);
         Vector3 vec = collider.transform.position - this.transform.position;
         Debug.Log("Collision between  " + this.Id + " and " + collider.gameObject.name);
+        if (collider.name == "Plane")
+            return;
         string str = string.Join(",", new string[]
         {
             collider.gameObject.name,
@@ -71,6 +73,8 @@ public class CollisionTrigger : MonoBehaviour {
         Vector3 vec = collider.transform.position - collider.contacts[0].thisCollider.gameObject.transform.position;
         Transform bounds = collider.contacts[0].thisCollider.gameObject.transform;
         Debug.Log("$$Collision between  " + this.Id + " and " + collider.gameObject.name);
+        if (collider.gameObject.name == "Plane" || collider.gameObject.name.Contains("ground") || collider.gameObject.name == "triggerObject1" || collider.gameObject.name == "triggerObject2" )
+            return;
         string str = string.Join(",", new string[]
         {
             collider.gameObject.name,
