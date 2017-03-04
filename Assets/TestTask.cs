@@ -4,7 +4,7 @@ using System.IO;
 
 public enum Tasks { Task1, Task2, Task3, Task4, ReachGreenLollipop0thTime, ReachRedLollipop1stTime, ReachRedLollipop2ndTime, ReachGreenLollipop1stTime, ReachGreenLollipop2ndTime, ThrowingObjects, Completed };
 
-public enum BodyLog { head, hip, torso, rightHand, leftHand, rightFoot, leftFoot, rightShin, leftShin };
+public enum BodyLog {  rightFoot, leftFoot, rightHand, leftHand, head, rightShin, leftShin , hip, torso, };
 
 public enum AvatarType { carlFirstPerson, carlThirdPerson, robotFirstPerson, robotThirdPerson, pointCloudFirstPerson, pointCloudThirdPerson };
 
@@ -59,9 +59,11 @@ public class TestTask : MonoBehaviour {
     float lastTimeBetweenTriggers = 0.0f;
     float lastTimeBetweenCollisions = 0.0f;
     float startTime = 0.0f;
+    int countFullBodiesStr = 0;
+    private string pathHeaderStr;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         //currentTask = Tasks.Task1;
         //uncomment this for the task
         currentTask = Tasks.ReachGreenLollipop0thTime;
@@ -69,7 +71,7 @@ public class TestTask : MonoBehaviour {
         _trackedObj = Camera.main;
         lastPos = _trackedObj.transform.position;
         InitializeReport();
-        InitializeFullbodyReport();
+        
         int i = 1;
         
         while(Directory.Exists(Directory.GetCurrentDirectory()+"/user"+i+avatarType.ToString()))
@@ -77,20 +79,26 @@ public class TestTask : MonoBehaviour {
             i++;
         }
         //se nao houver diretorios
-        
+
+        System.IO.Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/test");
         System.IO.Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/user"+i+ avatarType.ToString());
+        //System.IO.StreamWriter
         pathDirectory = Directory.GetCurrentDirectory() + "/user" + i + avatarType.ToString() + "/";
-            
-        
-        
-        
-        Debug.Log("log");
+        if(fullbodyLog)
+            InitializeFullbodyReport();
+
+
+        //Debug.Log("log");
 	}
 	
 	// Update is called once per frame
 	void Update () {
         if (currentTask != Tasks.Completed )
         {
+            if(fullbodyLog)
+            {
+                updateFullbodyReport();
+            }
             UpdatePathReport();
         }
         
@@ -138,6 +146,7 @@ public class TestTask : MonoBehaviour {
                         separator + "RotColliderZ" + separator + "ErrorX" + separator + "ErrorY" + separator + "ErrorZ" + separator+ "TimeElapsed"+ separator + "CurrentTime"+ separator + "CurrentTask"+"\n";
         logStr = "TriggerNum" + separator + "TimeElapsed" + separator + "CurrentTime\n";
         pathStr = "Task,Trigger,currentPosX,currentPosY,currentPosZ,pathElapsedX,pathElapsedY,pathElapsedZ,rotX,rotY,rotZ,magnitude\n";
+        pathHeaderStr = "Task,Trigger,currentPosX,currentPosY,currentPosZ,pathElapsedX,pathElapsedY,pathElapsedZ,rotX,rotY,rotZ,magnitude\n";
     }
 
     void CompleteReport()
@@ -150,11 +159,13 @@ public class TestTask : MonoBehaviour {
         {
             for (int i = 0; i < 9; i++)
             {
-                System.IO.File.WriteAllText(pathDirectory + "/" + bodyStrPath[i], bodyStr[i]);
+                //System.IO.File.WriteAllText(pathDirectory + "/" + bodyStrPath[i] + ".csv", pathHeaderStr);
+                System.IO.File.WriteAllText(pathDirectory + "/" + bodyStrPath[i] + ".csv", pathHeaderStr + bodyStr[i]);
+                //System.IO.File.AppendAllText(pathDirectory + "/" + bodyStrPath[i] + ".csv", "TimeTotal," + "0.355");
             }
             
         }
-        else
+        //else
         {
             System.IO.File.WriteAllText(pathDirectory + "/" + pathLogFileName + ".csv", pathStr);
         }
@@ -178,43 +189,56 @@ public class TestTask : MonoBehaviour {
         lastBodyPos = new Vector3[9];
         bodyStrPath = new string[9];
         bodyStr = new string[9];
+        
+
         if(rightFoot!=null)
         {
-            lastBodyPos[(int)BodyLog.rightFoot] = rightFoot.position;
-            bodyStrPath[(int)BodyLog.rightFoot] = "rightFootLog.csv";
+            lastBodyPos[0] = rightFoot.position;
+            bodyStrPath[0] = "rightFootLog.csv";
+            Debug.Log("rightFootLog");
+            //System.IO.File.WriteAllText(pathDirectory  + "rightFootLog.csv", "");
             //create a file for each part of the body
         }
         if(leftFoot!=null)
         {
             //log this
-            lastBodyPos[(int)BodyLog.leftFoot] = leftFoot.position;
-            bodyStrPath[(int)BodyLog.leftFoot] = "leftFootLog.csv";
+            lastBodyPos[1] = leftFoot.position;
+            bodyStrPath[1] = "leftFootLog.csv";
+            Debug.Log("leftFootLog");
+            //System.IO.File.WriteAllText(pathDirectory  + "leftFootLog.csv", "");
         }
         if(rightHand!=null)
         {
-            lastBodyPos[(int)BodyLog.rightHand] = rightHand.position;
-            bodyStrPath[(int)BodyLog.rightHand] = "rightHandLog.csv";
+            lastBodyPos[2] = rightHand.position;
+            bodyStrPath[2] = "rightHandLog.csv";
+            //System.IO.File.WriteAllText(pathDirectory  + "rightHandLog.csv", "");
         }
         if(leftHand!=null)
         {
-            lastBodyPos[(int)BodyLog.leftHand] = leftHand.position;
-            bodyStrPath[(int)BodyLog.leftHand] = "leftHandLog.csv";
+            lastBodyPos[3] = leftHand.position;
+            bodyStrPath[3] = "leftHandLog.csv";
+            //System.IO.File.WriteAllText(pathDirectory + "leftHandLog.csv", "");
         }
         if(rightShin!=null)
         {
-            lastBodyPos[(int)BodyLog.rightShin] = rightShin.position;
-            bodyStrPath[(int)BodyLog.rightShin] = "rightShinLog.csv";
+            lastBodyPos[4] = rightShin.position;
+            bodyStrPath[4] = "rightShinLog.csv";
+            //System.IO.File.WriteAllText(pathDirectory + "rightShinLog.csv", "");
         }
         if(leftShin!=null)
         {
-            lastBodyPos[(int)BodyLog.leftShin] = leftShin.position;
-            bodyStrPath[(int)BodyLog.leftShin] = "leftShinLog.csv";
+            lastBodyPos[5] = leftShin.position;
+            bodyStrPath[5] = "leftShinLog.csv";
+            //System.IO.File.WriteAllText(pathDirectory  + "leftShinLog.csv", "");
         }
         if(head!=null)
         {
-            lastBodyPos[(int)BodyLog.head] = head.position;
-            bodyStrPath[(int)BodyLog.head] = "headLog.csv";
+            lastBodyPos[4] = head.position;
+            bodyStrPath[4] = "headLog.csv";
+            //System.IO.File.WriteAllText(pathDirectory  + "headLog.csv", "");
         }
+        
+
         
     }
 
@@ -223,11 +247,11 @@ public class TestTask : MonoBehaviour {
         Vector3 currentPosVector = new Vector3();
         if (rightFoot != null)
         {
-            currentPosVector = rightFoot.transform.position - lastBodyPos[(int)BodyLog.rightFoot];
+            currentPosVector = rightFoot.transform.position - lastBodyPos[0];
             if (currentPosVector.magnitude < threshold )
             {
-                lastBodyPos[(int)BodyLog.rightFoot] = rightFoot.transform.position;
-                bodyStr[(int)BodyLog.rightFoot] += pathStr += string.Join(",", new string[]
+                lastBodyPos[0] = rightFoot.transform.position;
+                bodyStr[0] += string.Join(",", new string[]
                 {
                     currentTask.ToString(),
                     currentTrigger.ToString(),
@@ -244,16 +268,18 @@ public class TestTask : MonoBehaviour {
                     "\n"
 
                 });
+                //System.IO.File.WriteAllText(pathDirectory +  bodyStrPath[0] , bodyStr[0]);
             }
+
             //create a file for each part of the body
         }
         if (leftFoot != null)
         {
-            currentPosVector = leftFoot.transform.position - lastBodyPos[(int)BodyLog.rightFoot];
+            currentPosVector = leftFoot.transform.position - lastBodyPos[1];
             if (currentPosVector.magnitude < threshold)
             {
-                lastBodyPos[(int)BodyLog.leftFoot] = leftFoot.transform.position;
-                bodyStr[(int)BodyLog.leftFoot] += pathStr += string.Join(",", new string[]
+                lastBodyPos[1] = leftFoot.transform.position;
+                bodyStr[1] +=  string.Join(",", new string[]
                 {
                     currentTask.ToString(),
                     currentTrigger.ToString(),
@@ -270,15 +296,16 @@ public class TestTask : MonoBehaviour {
                     "\n"
 
                 });
+                //System.IO.File.WriteAllText(pathDirectory +  bodyStrPath[1] , bodyStr[1]);
             }
         }
         if (rightHand != null)
         {
-            currentPosVector = rightHand.transform.position - lastBodyPos[(int)BodyLog.rightHand];
+            currentPosVector = rightHand.transform.position - lastBodyPos[2];
             if (currentPosVector.magnitude < threshold)
             {
-                lastBodyPos[(int)BodyLog.rightHand] = rightHand.transform.position;
-                bodyStr[(int)BodyLog.rightHand] += pathStr += string.Join(",", new string[]
+                lastBodyPos[2] = rightHand.transform.position;
+                bodyStr[(int)BodyLog.rightHand] += string.Join(",", new string[]
                 {
                     currentTask.ToString(),
                     currentTrigger.ToString(),
@@ -295,6 +322,7 @@ public class TestTask : MonoBehaviour {
                     "\n"
 
                 });
+                //System.IO.File.WriteAllText(pathDirectory +  bodyStrPath[2] , bodyStr[2]);
             }
         }
         if (leftHand != null)
@@ -304,7 +332,7 @@ public class TestTask : MonoBehaviour {
             if (currentPosVector.magnitude < threshold)
             {
                 lastBodyPos[(int)BodyLog.leftHand] = rightHand.transform.position;
-                bodyStr[(int)BodyLog.leftHand] += pathStr += string.Join(",", new string[]
+                bodyStr[(int)BodyLog.leftHand] += string.Join(",", new string[]
                 {
                     currentTask.ToString(),
                     currentTrigger.ToString(),
@@ -321,6 +349,7 @@ public class TestTask : MonoBehaviour {
                     "\n"
 
                 });
+                //System.IO.File.WriteAllText(pathDirectory + bodyStrPath[3] , bodyStr[3]);
             }
         }
         if (rightShin != null)
@@ -330,7 +359,7 @@ public class TestTask : MonoBehaviour {
             if (currentPosVector.magnitude < threshold)
             {
                 lastBodyPos[(int)BodyLog.rightShin] = rightShin.transform.position;
-                bodyStr[(int)BodyLog.rightShin] += pathStr += string.Join(",", new string[]
+                bodyStr[(int)BodyLog.rightShin]  += string.Join(",", new string[]
                 {
                     currentTask.ToString(),
                     currentTrigger.ToString(),
@@ -347,6 +376,7 @@ public class TestTask : MonoBehaviour {
                     "\n"
 
                 });
+                //System.IO.File.WriteAllText(pathDirectory + bodyStrPath[4] , bodyStr[4]);
             }
         }
         if (leftShin != null)
@@ -356,7 +386,7 @@ public class TestTask : MonoBehaviour {
             if (currentPosVector.magnitude < threshold)
             {
                 lastBodyPos[(int)BodyLog.leftShin] = leftShin.transform.position;
-                bodyStr[(int)BodyLog.leftShin] += pathStr += string.Join(",", new string[]
+                bodyStr[(int)BodyLog.leftShin] += string.Join(",", new string[]
                 {
                     currentTask.ToString(),
                     currentTrigger.ToString(),
@@ -373,6 +403,7 @@ public class TestTask : MonoBehaviour {
                     "\n"
 
                 });
+                //System.IO.File.WriteAllText(pathDirectory +  bodyStrPath[5] , bodyStr[5]);
             }
         }
         if (head != null)
@@ -382,7 +413,7 @@ public class TestTask : MonoBehaviour {
             if (currentPosVector.magnitude < threshold)
             {
                 lastBodyPos[(int)BodyLog.head] = head.transform.position;
-                bodyStr[(int)BodyLog.head] += pathStr += string.Join(",", new string[]
+                bodyStr[(int)BodyLog.head] += string.Join(",", new string[]
                 {
                     currentTask.ToString(),
                     currentTrigger.ToString(),
@@ -399,8 +430,30 @@ public class TestTask : MonoBehaviour {
                     "\n"
 
                 });
+                //System.IO.File.WriteAllText(pathDirectory + bodyStrPath[6] , bodyStr[6]);
             }
         }
+        //flush the string into the file
+        /*if (countFullBodiesStr > 200)
+        {
+            for (int i = 0; i < 1; i++)
+            {
+                try
+                {
+                    System.IO.File.WriteAllText(pathDirectory + "/"+bodyStrPath[i], "333");
+                    Debug.Log("&&&&&");
+                }
+                catch(System.Exception ex)
+                {
+                    Debug.LogError("@@@@@@@ : " + bodyStrPath[i]);
+                }
+                
+                bodyStr[i] = "";
+            }
+            countFullBodiesStr = 0;
+        }
+        else
+            countFullBodiesStr++;*/
     }
 
     void UpdatePathReport()
