@@ -34,7 +34,7 @@ public class CollisionTrigger : MonoBehaviour {
         Vector3 rot = new Vector3(collider.transform.eulerAngles.x, collider.transform.eulerAngles.y, collider.transform.eulerAngles.z);
         Vector3 vec = collider.transform.position - this.transform.position;
         Debug.Log("Collision between  " + this.Id + " and " + collider.gameObject.name);
-        if (collider.name == "Plane")
+        if (collider.gameObject.name == "Plane" || collider.gameObject.name.Contains("ground") || collider.gameObject.name == "triggerObject1" || collider.gameObject.name == "triggerObject2")
             return;
         string str = string.Join(",", new string[]
         {
@@ -75,6 +75,9 @@ public class CollisionTrigger : MonoBehaviour {
         Debug.Log("$$Collision between  " + this.Id + " and " + collider.gameObject.name);
         if (collider.gameObject.name == "Plane" || collider.gameObject.name.Contains("ground") || collider.gameObject.name == "triggerObject1" || collider.gameObject.name == "triggerObject2" )
             return;
+        /*collisionLogStr = "Joint" + separator + "PosX" + separator + "PosY" + separator + "PosZ" + separator + "RotX" + separator + "RotY" + separator + "RotZ" + separator +
+                        "ColliderName" + separator + "PosColliderX" + separator + "PosColliderY" + separator + "PosColliderZ" + separator + "RotColliderX" + separator + "RotColliderY" +
+                        separator + "RotColliderZ" + separator + "ErrorX" + separator + "ErrorY" + separator + "ErrorZ" + separator+ "TimeElapsed"+ separator + "CurrentTime"+ separator + "CurrentTask"+"\n";*/
         string str = string.Join(",", new string[]
         {
             collider.gameObject.name,
@@ -85,7 +88,7 @@ public class CollisionTrigger : MonoBehaviour {
             rot.x.ToString(),
             rot.y.ToString(),
             rot.z.ToString(),
-            this.Id,
+            this.name,
             bounds.position.x.ToString(),
             bounds.position.y.ToString(),
             bounds.position.z.ToString(),

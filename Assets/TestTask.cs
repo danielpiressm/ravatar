@@ -96,19 +96,29 @@ public class TestTask : MonoBehaviour {
         
     }
 
+    float getTaskTime(float time)
+    {
+        if (time - startTime < 0)
+            return 0;
+        else
+            return time - startTime;
+    }
+
     void serializeCollision(string str)
     {
         float currentTime = Time.realtimeSinceStartup;
-        logStr += currentTask.ToString() + "," + (currentTime - lastTimeBetweenCollisions) +  ","+ currentTime + "," + currentTask +  "\n";
+        
+        //logStr += currentTask.ToString() + "," + (getTaskTime(currentTime - lastTimeBetweenCollisions)) +  ","+ getTaskTime(currentTime) +   "\n";
         //lastTimeBetweenTasks = currentTime;
-        collisionLogStr += str + "\n";
-        //Debug.Log("&&" + str);
+        collisionLogStr += str + "," + (getTaskTime(currentTime) - getTaskTime(lastTimeBetweenCollisions)) + "," + getTaskTime(currentTime)+ "," + currentTask + "\n";
+        Debug.Log("Time : " + currentTime + " startTime : " + startTime + "lastCollision" + lastTimeBetweenCollisions);
+        lastTimeBetweenCollisions = currentTime;
     }
 
     void serializeBallCollision(string str)
     {
         float currentTime = Time.realtimeSinceStartup;
-        logStr += currentTask.ToString() + "," + (currentTime - lastTimeBetweenCollisions) + currentTime + "\n";
+        logStr += currentTask.ToString() + "," + (currentTime - lastTimeBetweenCollisions) + ","+ currentTime + "\n";
         //lastTimeBetweenTasks = currentTime;
         collisionLogStr += str;
         //Debug.Log("&&" + str);
@@ -116,23 +126,24 @@ public class TestTask : MonoBehaviour {
 
     void logBallThrow(float time)
     {
-        float lastTimeBetweenCollisions = time;
+        lastTimeBetweenCollisions = time;
+        Debug.Log("BetweenCollisions : " + time + ","+ Time.realtimeSinceStartup);
     }
 
 
     void InitializeReport()
     {
         collisionLogStr = "Joint" + separator + "PosX" + separator + "PosY" + separator + "PosZ" + separator + "RotX" + separator + "RotY" + separator + "RotZ" + separator +
-                        "ColliderName" + separator + "PosColliderX" + separator + "PosColliderY" + separator + "PosColliderZ" + separator + "RotColliderX" + separator + "RotColliderZ" +
-                        "ErrorX" + separator + "ErrorY" + separator + "ErrorZ" + separator+ "TimeElapsed"+ separator + "CurrentTime"+ separator + "CurrentTask"+"\n";
-        logStr = "TriggerNum" + separator + "Time" + "\n";
+                        "ColliderName" + separator + "PosColliderX" + separator + "PosColliderY" + separator + "PosColliderZ" + separator + "RotColliderX" + separator + "RotColliderY" +
+                        separator + "RotColliderZ" + separator + "ErrorX" + separator + "ErrorY" + separator + "ErrorZ" + separator+ "TimeElapsed"+ separator + "CurrentTime"+ separator + "CurrentTask"+"\n";
+        logStr = "TriggerNum" + separator + "TimeElapsed" + separator + "CurrentTime\n";
         pathStr = "Task,Trigger,currentPosX,currentPosY,currentPosZ,pathElapsedX,pathElapsedY,pathElapsedZ,rotX,rotY,rotZ,magnitude\n";
     }
 
     void CompleteReport()
     {
 
-        logStr += "TotalTime" + Time.realtimeSinceStartup;
+        logStr += "TotalTime" + getTaskTime(Time.realtimeSinceStartup)+"\n";
         System.IO.File.WriteAllText( pathDirectory+"/"+ collisionLogfileName + ".csv",collisionLogStr);
         System.IO.File.WriteAllText( pathDirectory+"/"+logFileName + ".csv", logStr);
         if(fullbodyLog)
@@ -154,7 +165,7 @@ public class TestTask : MonoBehaviour {
     void UpdateReport( )
     {
         float currentTime = Time.realtimeSinceStartup;
-        logStr += currentTask.ToString() + "," + (currentTime - lastTimeBetweenTasks)+"\n";
+        logStr += currentTask.ToString() + "," + (getTaskTime(currentTime) - getTaskTime(lastTimeBetweenTasks))+ ","+ getTaskTime(currentTime)+"\n";
         lastTimeBetweenTasks = currentTime;
         lastTimeBetweenCollisions = currentTime;
         lastTimeBetweenTriggers = currentTime;
@@ -493,7 +504,7 @@ public class TestTask : MonoBehaviour {
                 SetActiveChildren(objectsTask3, false);
                 SetActiveChildren(objectTask4,true);
                 SetActiveChildren(pirulito, false);
-                CompleteReport();
+                //CompleteReport();
                 //throwing objectsToBeImplemented
             }
         }
@@ -506,6 +517,7 @@ public class TestTask : MonoBehaviour {
                 Debug.Log(currentTask.ToString());
                 lastTimeBetweenTasks = Time.realtimeSinceStartup;
                 startTime = lastTimeBetweenTasks;
+                Debug.Log("startTime = " + startTime);
             }
             if (currentTask == Tasks.ReachGreenLollipop1stTime)
             {
