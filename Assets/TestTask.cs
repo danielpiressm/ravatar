@@ -144,7 +144,7 @@ public class TestTask : MonoBehaviour {
         collisionLogStr = "Joint" + separator + "PosX" + separator + "PosY" + separator + "PosZ" + separator + "RotX" + separator + "RotY" + separator + "RotZ" + separator +
                         "ColliderName" + separator + "PosColliderX" + separator + "PosColliderY" + separator + "PosColliderZ" + separator + "RotColliderX" + separator + "RotColliderY" +
                         separator + "RotColliderZ" + separator + "ErrorX" + separator + "ErrorY" + separator + "ErrorZ" + separator+ "PositionColliderTransformedX"+ separator + "PositionColliderTransformedY"+separator+"PositionColliderTransformedZ"+ separator +
-                        "CameraPositionX"+ separator + "CameraPositionY" + separator + "CameraPositionZ" + separator + 
+                        "CameraPositionX"+ separator + "CameraPositionY" + separator + "CameraPositionZ" + separator + "CameraRotationX" + separator + "CameraRotationY" + separator + "CameraRotationZ" + separator + 
                         "TimeElapsed"+ separator + "CurrentTime"+ separator + "CurrentTask"+"\n";
         logStr = "TriggerNum" + separator + "TimeElapsed" + separator + "CurrentTime\n";
         pathStr = "Task,Trigger,currentPosX,currentPosY,currentPosZ,pathElapsedX,pathElapsedY,pathElapsedZ,rotX,rotY,rotZ,magnitude\n";
@@ -192,7 +192,7 @@ public class TestTask : MonoBehaviour {
         bodyStrPath = new string[9];
         bodyStr = new string[9];
         
-        for(int i = 0; i < 4; i++)
+        for(int i = 0; i < 5; i++)
         {
             bodyStr[i] = pathHeaderStr;
         }
@@ -296,6 +296,7 @@ public class TestTask : MonoBehaviour {
             currentPosVector = leftFoot.transform.position - lastBodyPos[1];
             if (true)
             {
+                //pathHeaderStr = "Task,Trigger,currentPosX,currentPosY,currentPosZ,pathElapsedX,pathElapsedY,pathElapsedZ,rotX,rotY,rotZ,magnitude,CameraPosX,CameraPosY,CameraPosZ,CameraRotX,CameraRotY,CameraRotZ\n";
                 lastBodyPos[1] = leftFoot.transform.position;
                 bodyStr[1] +=  string.Join(",", new string[]
                 {
@@ -498,7 +499,7 @@ public class TestTask : MonoBehaviour {
                 try
                 {
                     System.IO.File.AppendAllText(pathDirectory + "/"+bodyStrPath[i], bodyStr[i]);
-                    Debug.Log("&&&&&");
+                    //Debug.Log("&&&&&");
                 }
                 catch(System.Exception ex)
                 {
@@ -608,6 +609,7 @@ public class TestTask : MonoBehaviour {
             }
             else if(currentTask == Tasks.ReachRedLollipop2ndTime)
             {
+                UpdateReport();
                 lastTimeBetweenCollisions = Time.realtimeSinceStartup;
                 currentTask = Tasks.ThrowingObjects;
                 Debug.Log("Start Throwing Object Task");

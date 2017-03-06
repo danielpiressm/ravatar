@@ -123,7 +123,7 @@ public class TrackerClientSimpleRobot : MonoBehaviour
 
         spineBase = createAvatarJoint(avatarGo.transform,"spineBase");
         spineShoulder = createAvatarJoint(avatarGo.transform,"spineShoulder");
-        head = createAvatarJoint(avatarGo.transform,"head",0.3f);
+        head = createAvatarJoint(avatarGo.transform,"head",0.20f);
         head.gameObject.GetComponent<Renderer>().enabled = showHead;
 
         leftShoulder = createAvatarJoint(avatarGo.transform,"leftShoulder");

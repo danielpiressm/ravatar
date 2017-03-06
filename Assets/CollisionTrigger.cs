@@ -55,7 +55,7 @@ public class CollisionTrigger : MonoBehaviour {
             return;
 
 
-        if (headTransform != null)
+        if (headTransform == null)
         {
             headPos = Vector3.zero;
             headRot = Vector3.zero;
@@ -68,10 +68,10 @@ public class CollisionTrigger : MonoBehaviour {
         }
 
 
-
+        //rotacao da cabeca ou da camera (eu voto pela camera :-))
         string str = string.Join(",", new string[]
         {
-            collider.gameObject.name,
+            "#"+collider.gameObject.name,
             //this.Id,
             pos.x.ToString(),
             pos.y.ToString(),
@@ -95,9 +95,9 @@ public class CollisionTrigger : MonoBehaviour {
             headPos.x.ToString(),
             headPos.y.ToString(),
             headPos.z.ToString(),
-            headRot.x.ToString(),
-            headRot.y.ToString(),
-            headRot.z.ToString()
+            Camera.main.transform.position.x.ToString(),
+            Camera.main.transform.position.y.ToString(),
+            Camera.main.transform.position.z.ToString()
         });
         SendMessageUpwards("serializeCollision", str);
         
@@ -131,7 +131,7 @@ public class CollisionTrigger : MonoBehaviour {
 
         Transform bounds = collider.contacts[0].thisCollider.gameObject.transform;
         Debug.Log("$$Collision between  " + this.Id + " and " + collider.gameObject.name);
-        if(headTransform!=null)
+        if(headTransform==null)
         {
             headPos = Vector3.zero;
             headRot = Vector3.zero;
@@ -175,9 +175,9 @@ public class CollisionTrigger : MonoBehaviour {
             headPos.x.ToString(),
             headPos.y.ToString(),
             headPos.z.ToString(),
-            headRot.x.ToString(),
-            headRot.y.ToString(),
-            headRot.z.ToString()
+            Camera.main.transform.position.x.ToString(),
+            Camera.main.transform.position.y.ToString(),
+            Camera.main.transform.position.z.ToString()
         });
         SendMessageUpwards("serializeCollision", str);
 
