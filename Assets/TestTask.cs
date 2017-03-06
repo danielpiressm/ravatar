@@ -53,7 +53,7 @@ public class TestTask : MonoBehaviour {
 
     int currentTrigger = 0;
 
-    float threshold = 0.05f;
+    float threshold = 0.00000f;
 
     float lastTimeBetweenTasks = 0.0f;
     float lastTimeBetweenTriggers = 0.0f;
@@ -115,8 +115,8 @@ public class TestTask : MonoBehaviour {
     void serializeCollision(string str)
     {
         float currentTime = Time.realtimeSinceStartup;
-        
-        //logStr += currentTask.ToString() + "," + (getTaskTime(currentTime - lastTimeBetweenCollisions)) +  ","+ getTaskTime(currentTime) +   "\n";
+        //"$" means collision
+        logStr += "$"+currentTask.ToString() + "," + (getTaskTime(currentTime - lastTimeBetweenCollisions)) +  ","+ getTaskTime(currentTime) +   "\n";
         //lastTimeBetweenTasks = currentTime;
         collisionLogStr += str + "," + (getTaskTime(currentTime) - getTaskTime(lastTimeBetweenCollisions)) + "," + getTaskTime(currentTime)+ "," + currentTask + "\n";
         Debug.Log("Time : " + currentTime + " startTime : " + startTime + "lastCollision" + lastTimeBetweenCollisions);
@@ -143,10 +143,12 @@ public class TestTask : MonoBehaviour {
     {
         collisionLogStr = "Joint" + separator + "PosX" + separator + "PosY" + separator + "PosZ" + separator + "RotX" + separator + "RotY" + separator + "RotZ" + separator +
                         "ColliderName" + separator + "PosColliderX" + separator + "PosColliderY" + separator + "PosColliderZ" + separator + "RotColliderX" + separator + "RotColliderY" +
-                        separator + "RotColliderZ" + separator + "ErrorX" + separator + "ErrorY" + separator + "ErrorZ" + separator+ "TimeElapsed"+ separator + "CurrentTime"+ separator + "CurrentTask"+"\n";
+                        separator + "RotColliderZ" + separator + "ErrorX" + separator + "ErrorY" + separator + "ErrorZ" + separator+ "PositionColliderTransformedX"+ separator + "PositionColliderTransformedY"+separator+"PositionColliderTransformedZ"+ separator +
+                        "CameraPositionX"+ separator + "CameraPositionY" + separator + "CameraPositionZ" + separator + 
+                        "TimeElapsed"+ separator + "CurrentTime"+ separator + "CurrentTask"+"\n";
         logStr = "TriggerNum" + separator + "TimeElapsed" + separator + "CurrentTime\n";
         pathStr = "Task,Trigger,currentPosX,currentPosY,currentPosZ,pathElapsedX,pathElapsedY,pathElapsedZ,rotX,rotY,rotZ,magnitude\n";
-        pathHeaderStr = "Task,Trigger,currentPosX,currentPosY,currentPosZ,pathElapsedX,pathElapsedY,pathElapsedZ,rotX,rotY,rotZ,magnitude\n";
+        pathHeaderStr = "Task,Trigger,currentPosX,currentPosY,currentPosZ,pathElapsedX,pathElapsedY,pathElapsedZ,rotX,rotY,rotZ,magnitude,CameraPosX,CameraPosY,CameraPosZ,CameraRotX,CameraRotY,CameraRotZ\n";
     }
 
     void CompleteReport()
@@ -160,7 +162,7 @@ public class TestTask : MonoBehaviour {
             for (int i = 0; i < 9; i++)
             {
                 //System.IO.File.WriteAllText(pathDirectory + "/" + bodyStrPath[i] + ".csv", pathHeaderStr);
-                System.IO.File.WriteAllText(pathDirectory + "/" + bodyStrPath[i] + ".csv", pathHeaderStr + bodyStr[i]);
+                //System.IO.File.WriteAllText(pathDirectory + "/" + bodyStrPath[i] + ".csv", pathHeaderStr + bodyStr[i]);
                 //System.IO.File.AppendAllText(pathDirectory + "/" + bodyStrPath[i] + ".csv", "TimeTotal," + "0.355");
             }
             
@@ -190,6 +192,10 @@ public class TestTask : MonoBehaviour {
         bodyStrPath = new string[9];
         bodyStr = new string[9];
         
+        for(int i = 0; i < 4; i++)
+        {
+            bodyStr[i] = pathHeaderStr;
+        }
 
         if(rightFoot!=null)
         {
@@ -244,11 +250,17 @@ public class TestTask : MonoBehaviour {
 
     void updateFullbodyReport()
     {
+        if(head == null)
+        {
+            GameObject headObj = new GameObject("head");
+            head = headObj.transform;
+            headObj.transform.position = Vector3.zero;
+        }
         Vector3 currentPosVector = new Vector3();
         if (rightFoot != null)
         {
             currentPosVector = rightFoot.transform.position - lastBodyPos[0];
-            if (currentPosVector.magnitude < threshold )
+            if (true )
             {
                 lastBodyPos[0] = rightFoot.transform.position;
                 bodyStr[0] += string.Join(",", new string[]
@@ -265,6 +277,12 @@ public class TestTask : MonoBehaviour {
                     rightFoot.transform.eulerAngles.y.ToString(),
                     rightFoot.transform.eulerAngles.z.ToString(),
                     rightFoot.transform.position.magnitude.ToString(),
+                    head.transform.position.x.ToString(),
+                    head.transform.position.y.ToString(),
+                    head.transform.position.z.ToString(),
+                    Camera.main.transform.eulerAngles.x.ToString(),
+                    Camera.main.transform.eulerAngles.y.ToString(),
+                    Camera.main.transform.eulerAngles.z.ToString(),
                     "\n"
 
                 });
@@ -276,7 +294,7 @@ public class TestTask : MonoBehaviour {
         if (leftFoot != null)
         {
             currentPosVector = leftFoot.transform.position - lastBodyPos[1];
-            if (currentPosVector.magnitude < threshold)
+            if (true)
             {
                 lastBodyPos[1] = leftFoot.transform.position;
                 bodyStr[1] +=  string.Join(",", new string[]
@@ -293,6 +311,12 @@ public class TestTask : MonoBehaviour {
                     leftFoot.transform.eulerAngles.y.ToString(),
                     leftFoot.transform.eulerAngles.z.ToString(),
                     leftFoot.transform.position.magnitude.ToString(),
+                    head.transform.position.x.ToString(),
+                    head.transform.position.y.ToString(),
+                    head.transform.position.z.ToString(),
+                    Camera.main.transform.eulerAngles.x.ToString(),
+                    Camera.main.transform.eulerAngles.y.ToString(),
+                    Camera.main.transform.eulerAngles.z.ToString(),
                     "\n"
 
                 });
@@ -302,8 +326,11 @@ public class TestTask : MonoBehaviour {
         if (rightHand != null)
         {
             currentPosVector = rightHand.transform.position - lastBodyPos[2];
-            if (currentPosVector.magnitude < threshold)
+            //currentPosVector = head.transform.position - lastBodyPos[(int)BodyLog.head];
+            if (true)
             {
+                
+
                 lastBodyPos[2] = rightHand.transform.position;
                 bodyStr[(int)BodyLog.rightHand] += string.Join(",", new string[]
                 {
@@ -319,6 +346,12 @@ public class TestTask : MonoBehaviour {
                     rightHand.transform.eulerAngles.y.ToString(),
                     rightHand.transform.eulerAngles.z.ToString(),
                     rightHand.transform.position.magnitude.ToString(),
+                    head.transform.position.x.ToString(),
+                    head.transform.position.y.ToString(),
+                    head.transform.position.z.ToString(),
+                    Camera.main.transform.eulerAngles.x.ToString(),
+                    Camera.main.transform.eulerAngles.y.ToString(),
+                    Camera.main.transform.eulerAngles.z.ToString(),
                     "\n"
 
                 });
@@ -328,8 +361,8 @@ public class TestTask : MonoBehaviour {
         if (leftHand != null)
         {
             lastBodyPos[(int)BodyLog.leftHand] = leftHand.transform.position;
-            currentPosVector = leftHand.transform.position - lastBodyPos[(int)BodyLog.leftHand];
-            if (currentPosVector.magnitude < threshold)
+            currentPosVector = head.transform.position - lastBodyPos[(int)BodyLog.head];
+            if (true)
             {
                 lastBodyPos[(int)BodyLog.leftHand] = rightHand.transform.position;
                 bodyStr[(int)BodyLog.leftHand] += string.Join(",", new string[]
@@ -346,6 +379,12 @@ public class TestTask : MonoBehaviour {
                     leftHand.transform.eulerAngles.y.ToString(),
                     leftHand.transform.eulerAngles.z.ToString(),
                     leftHand.transform.position.magnitude.ToString(),
+                    head.transform.position.x.ToString(),
+                    head.transform.position.y.ToString(),
+                    head.transform.position.z.ToString(),
+                    Camera.main.transform.eulerAngles.x.ToString(),
+                    Camera.main.transform.eulerAngles.y.ToString(),
+                    Camera.main.transform.eulerAngles.z.ToString(),
                     "\n"
 
                 });
@@ -355,8 +394,8 @@ public class TestTask : MonoBehaviour {
         if (rightShin != null)
         {
             lastBodyPos[(int)BodyLog.rightShin] = rightShin.transform.position;
-            currentPosVector = rightShin.transform.position - lastBodyPos[(int)BodyLog.rightShin];
-            if (currentPosVector.magnitude < threshold)
+            currentPosVector = head.transform.position - lastBodyPos[(int)BodyLog.rightShin];
+            if (true)
             {
                 lastBodyPos[(int)BodyLog.rightShin] = rightShin.transform.position;
                 bodyStr[(int)BodyLog.rightShin]  += string.Join(",", new string[]
@@ -373,6 +412,12 @@ public class TestTask : MonoBehaviour {
                     rightShin.transform.eulerAngles.y.ToString(),
                     rightShin.transform.eulerAngles.z.ToString(),
                     rightShin.transform.position.magnitude.ToString(),
+                    head.transform.position.x.ToString(),
+                    head.transform.position.y.ToString(),
+                    head.transform.position.z.ToString(),
+                    Camera.main.transform.eulerAngles.x.ToString(),
+                    Camera.main.transform.eulerAngles.y.ToString(),
+                    Camera.main.transform.eulerAngles.z.ToString(),
                     "\n"
 
                 });
@@ -382,8 +427,8 @@ public class TestTask : MonoBehaviour {
         if (leftShin != null)
         {
             lastBodyPos[(int)BodyLog.leftShin] = leftShin.transform.position;
-            currentPosVector = leftShin.transform.position - lastBodyPos[(int)BodyLog.leftShin];
-            if (currentPosVector.magnitude < threshold)
+            currentPosVector = head.transform.position - lastBodyPos[(int)BodyLog.leftShin];
+            if (true)
             {
                 lastBodyPos[(int)BodyLog.leftShin] = leftShin.transform.position;
                 bodyStr[(int)BodyLog.leftShin] += string.Join(",", new string[]
@@ -400,6 +445,12 @@ public class TestTask : MonoBehaviour {
                     leftShin.transform.eulerAngles.y.ToString(),
                     leftShin.transform.eulerAngles.z.ToString(),
                     leftShin.transform.position.magnitude.ToString(),
+                    head.transform.position.x.ToString(),
+                    head.transform.position.y.ToString(),
+                    head.transform.position.z.ToString(),
+                    Camera.main.transform.eulerAngles.x.ToString(),
+                    Camera.main.transform.eulerAngles.y.ToString(),
+                    Camera.main.transform.eulerAngles.z.ToString(),
                     "\n"
 
                 });
@@ -410,7 +461,7 @@ public class TestTask : MonoBehaviour {
         {
             lastBodyPos[(int)BodyLog.head] = head.transform.position;
             currentPosVector = head.transform.position - lastBodyPos[(int)BodyLog.head];
-            if (currentPosVector.magnitude < threshold)
+            if (true)
             {
                 lastBodyPos[(int)BodyLog.head] = head.transform.position;
                 bodyStr[(int)BodyLog.head] += string.Join(",", new string[]
@@ -427,6 +478,12 @@ public class TestTask : MonoBehaviour {
                     head.transform.eulerAngles.y.ToString(),
                     head.transform.eulerAngles.z.ToString(),
                     head.transform.position.magnitude.ToString(),
+                    head.transform.position.x.ToString(),
+                    head.transform.position.y.ToString(),
+                    head.transform.position.z.ToString(),
+                    Camera.main.transform.eulerAngles.x.ToString(),
+                    Camera.main.transform.eulerAngles.y.ToString(),
+                    Camera.main.transform.eulerAngles.z.ToString(),
                     "\n"
 
                 });
@@ -434,18 +491,18 @@ public class TestTask : MonoBehaviour {
             }
         }
         //flush the string into the file
-        /*if (countFullBodiesStr > 200)
+        if (countFullBodiesStr > 20)
         {
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 5; i++)
             {
                 try
                 {
-                    System.IO.File.WriteAllText(pathDirectory + "/"+bodyStrPath[i], "333");
+                    System.IO.File.AppendAllText(pathDirectory + "/"+bodyStrPath[i], bodyStr[i]);
                     Debug.Log("&&&&&");
                 }
                 catch(System.Exception ex)
                 {
-                    Debug.LogError("@@@@@@@ : " + bodyStrPath[i]);
+                    //Debug.LogError("@@@@@@@ : " + bodyStrPath[i]);
                 }
                 
                 bodyStr[i] = "";
@@ -453,7 +510,7 @@ public class TestTask : MonoBehaviour {
             countFullBodiesStr = 0;
         }
         else
-            countFullBodiesStr++;*/
+            countFullBodiesStr++;
     }
 
     void UpdatePathReport()

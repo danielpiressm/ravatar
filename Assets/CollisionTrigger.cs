@@ -24,18 +24,51 @@ public class CollisionTrigger : MonoBehaviour {
 
     void OnTriggerEnter(Collider collider)
     {
-       /* collisionLogStr = "Joint" + separator + "PosX" + separator + "PosY" + separator + "PosZ" + separator + "RotX" + separator + "RotY" + separator + "RotZ" + separator +
-                        "ColliderName" + separator + "PosColliderX" + separator + "PosColliderY" + separator + "PosColliderZ" + separator + "RotColliderX" + separator + "RotColliderZ" +
-                        "ErrorX" + separator + "ErrorY" + separator + "ErrorZ" + separator + "TimeElapsed" + "\n";*/
+        /* collisionLogStr = "Joint" + separator + "PosX" + separator + "PosY" + separator + "PosZ" + separator + "RotX" + separator + "RotY" + separator + "RotZ" + separator +
+                         "ColliderName" + separator + "PosColliderX" + separator + "PosColliderY" + separator + "PosColliderZ" + separator + "RotColliderX" + separator + "RotColliderZ" +
+                         "ErrorX" + separator + "ErrorY" + separator + "ErrorZ" + separator + "TimeElapsed" + "\n";*/
+
+        Transform headTransform = null;
+        HeadCameraController head;
+        Vector3 headPos;
+        Vector3 headRot;
+
+        try
+        {
+            head = (HeadCameraController)Camera.main.transform.parent.gameObject.GetComponent<HeadCameraController>();
+            headTransform = head.headTransform;
+        }
+        catch (System.Exception ex)
+        {
+
+        }
+
         float currentTime = Time.realtimeSinceStartup;
         float triggerTime = currentTime - lastTime;
         lastTime = currentTime;
         Vector3 pos = new Vector3(collider.transform.position.x, collider.transform.position.y, collider.transform.position.z);
         Vector3 rot = new Vector3(collider.transform.eulerAngles.x, collider.transform.eulerAngles.y, collider.transform.eulerAngles.z);
         Vector3 vec = collider.transform.position - this.transform.position;
+        Vector3 vec2 = Camera.main.transform.InverseTransformPoint(collider.transform.position);
         Debug.Log("Collision between  " + this.Id + " and " + collider.gameObject.name);
         if (collider.gameObject.name == "Plane" || collider.gameObject.name.Contains("ground") || collider.gameObject.name == "triggerObject1" || collider.gameObject.name == "triggerObject2")
             return;
+
+
+        if (headTransform != null)
+        {
+            headPos = Vector3.zero;
+            headRot = Vector3.zero;
+        }
+        else
+        {
+            headPos = headTransform.position;
+            headRot = headTransform.eulerAngles;
+            vec2 = headTransform.InverseTransformPoint(pos);
+        }
+
+
+
         string str = string.Join(",", new string[]
         {
             collider.gameObject.name,
@@ -55,7 +88,16 @@ public class CollisionTrigger : MonoBehaviour {
             this.transform.eulerAngles.z.ToString(),
             vec.x.ToString(),
             vec.y.ToString(),
-            vec.z.ToString()
+            vec.z.ToString(),
+            vec2.x.ToString(),
+            vec2.y.ToString(),
+            vec2.z.ToString(),
+            headPos.x.ToString(),
+            headPos.y.ToString(),
+            headPos.z.ToString(),
+            headRot.x.ToString(),
+            headRot.y.ToString(),
+            headRot.z.ToString()
         });
         SendMessageUpwards("serializeCollision", str);
         
@@ -64,6 +106,11 @@ public class CollisionTrigger : MonoBehaviour {
 
     void OnCollisionEnter(Collision collider)
     {
+        Transform headTransform = null;
+        HeadCameraController head;
+        Vector3 headPos;
+        Vector3 headRot;
+
         float currentTime = Time.realtimeSinceStartup;
         float triggerTime = currentTime - lastTime;
         lastTime = currentTime;
@@ -71,8 +118,32 @@ public class CollisionTrigger : MonoBehaviour {
         Vector3 pos = new Vector3(collider.transform.position.x, collider.transform.position.y, collider.transform.position.z);
         Vector3 rot = new Vector3(collider.transform.eulerAngles.x, collider.transform.eulerAngles.y, collider.transform.eulerAngles.z);
         Vector3 vec = collider.transform.position - collider.contacts[0].thisCollider.gameObject.transform.position;
+        Vector3 vec2 = Camera.main.transform.InverseTransformPoint(pos);
+
+        try
+        {
+            head = (HeadCameraController) Camera.main.transform.parent.gameObject.GetComponent<HeadCameraController>();
+            headTransform = head.headTransform;
+        }catch(System.Exception ex)
+        {
+            
+        }
+
         Transform bounds = collider.contacts[0].thisCollider.gameObject.transform;
         Debug.Log("$$Collision between  " + this.Id + " and " + collider.gameObject.name);
+        if(headTransform!=null)
+        {
+            headPos = Vector3.zero;
+            headRot = Vector3.zero;
+        }
+        else
+        {
+            headPos = headTransform.position;
+            headRot = headTransform.eulerAngles;
+            vec2 = headTransform.InverseTransformPoint(pos);
+        }
+
+
         if (collider.gameObject.name == "Plane" || collider.gameObject.name.Contains("ground") || collider.gameObject.name == "triggerObject1" || collider.gameObject.name == "triggerObject2" )
             return;
         /*collisionLogStr = "Joint" + separator + "PosX" + separator + "PosY" + separator + "PosZ" + separator + "RotX" + separator + "RotY" + separator + "RotZ" + separator +
@@ -97,7 +168,16 @@ public class CollisionTrigger : MonoBehaviour {
             bounds.eulerAngles.z.ToString(),
             vec.x.ToString(),
             vec.y.ToString(),
-            vec.z.ToString()
+            vec.z.ToString(),
+            vec2.x.ToString(),
+            vec2.y.ToString(),
+            vec2.z.ToString(),
+            headPos.x.ToString(),
+            headPos.y.ToString(),
+            headPos.z.ToString(),
+            headRot.x.ToString(),
+            headRot.y.ToString(),
+            headRot.z.ToString()
         });
         SendMessageUpwards("serializeCollision", str);
 
