@@ -88,7 +88,7 @@ public class TrackerClient : MonoBehaviour
 
 	void Update()
 	{
-		if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.C)) // Mouse tap
+		if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.PageDown)) // Mouse tap
 		{
 			string currentHumanId = GetHumanIdWithHandUp();
 
