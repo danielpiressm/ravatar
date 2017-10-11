@@ -81,7 +81,7 @@ public class TrackerClientSimpleRobot : MonoBehaviour
     {
         if(testTaskScript)
         {
-            testTaskScript.rightHand = rightElbow;
+            /*testTaskScript.rightHand = rightElbow;
             testTaskScript.leftHand = leftElbow;
             testTaskScript.head = head;
             testTaskScript.rightFoot = rightAnkle;
@@ -89,7 +89,7 @@ public class TrackerClientSimpleRobot : MonoBehaviour
             //testTaskScript.rightShin =
             //testTaskScript.leftShin = 
             //testTaskScript.rightHand = rightF
-            testTaskScript.InitializeFullbodyReport();
+            testTaskScript.InitializeFullbodyReport();*/
         }
     }
 
