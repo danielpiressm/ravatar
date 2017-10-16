@@ -85,6 +85,10 @@ public class CollisionTrigger : MonoBehaviour
     {
         //float currentTime = Time.realtimeSinceStartup;
         //increm
+        if(collider.gameObject.name.Contains("mixamo"))
+        {
+            Debug.Log("!!");
+        }
 
         Transform headTransform = null;
         HeadCameraController head;
@@ -107,7 +111,8 @@ public class CollisionTrigger : MonoBehaviour
         Vector3 rot = new Vector3(collider.transform.eulerAngles.x, collider.transform.eulerAngles.y, collider.transform.eulerAngles.z);
         Vector3 vec = collider.transform.position - this.transform.position;
         Vector3 vec2 = Camera.main.transform.InverseTransformPoint(collider.transform.position);
-        if (collider.gameObject.name == "Plane" || collider.gameObject.name.Contains("ground") || collider.gameObject.name == "triggerObject1" || collider.gameObject.name == "triggerObject2")
+        if (collider.gameObject.name == "Plane" || collider.gameObject.name.Contains("ground") || collider.gameObject.name == "triggerObject1" || 
+            collider.gameObject.name == "triggerObject2" || collider.gameObject.name == "redCollider" || collider.gameObject.name == "greenCollider")
             return;
 
 
@@ -159,11 +164,15 @@ public class CollisionTrigger : MonoBehaviour
             currentTime.ToString(),
             "\n"
         });
-        if (tTask && tTask.enabled == true)
+        if (tTask)
         {
-            tTask.collisionEnded(this.Id, collider.gameObject.name, currentTime);
-            tTask.serializeCollision(str);
-            //tTask.incrementCollidedTime(triggerTime, this.Id,collider.gameObject.name);
+            if(tTask.enabled)
+            {
+                tTask.collisionEnded(this.Id, collider.gameObject.name, currentTime);
+                tTask.serializeCollision(str);
+                //tTask.incrementCollidedTime(triggerTime, this.Id,collider.gameObject.name);
+            }
+
         }
 
     }

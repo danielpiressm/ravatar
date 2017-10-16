@@ -86,6 +86,11 @@ public class TestTask : MonoBehaviour {
 
     }
 
+    public AvatarType getAvatarType()
+    {
+        return avatarType;
+    }
+
     public string getPathDirectory()
     {
         return pathDirectory;

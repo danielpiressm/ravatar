@@ -107,12 +107,19 @@ public class BodyHandler : MonoBehaviour {
             }
         }
 
+        if (Camera.main.transform.parent.gameObject.GetComponent<HeadCameraController>().thirdPerson)
+            head.gameObject.GetComponent<MeshRenderer>().enabled = true;
+        else
+            head.gameObject.GetComponent<MeshRenderer>().enabled = false;
+
         foreach (KeyValuePair<string, BodyPart> b in dictionaryBody)
         {
             if (abstractAvatar)
             {
                 GameObject go = b.Value.transform.gameObject;
                 go.GetComponent<MeshRenderer>().enabled = true;
+   
+
             }
             else
             {
