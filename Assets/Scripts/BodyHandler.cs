@@ -72,12 +72,17 @@ public class BodyHandler : MonoBehaviour {
         foreach(GameObject bodyGO in bodyPartsGO)
         {
             int index = bodyGO.name.IndexOf("Cube");
-            Debug.Log("bodyGO = " + bodyGO.name + " name = " + index);
+            string bodyPartName = "";
+            if (index > 0)
+                bodyPartName = bodyGO.name.Substring(0, index);
+            else
+                bodyPartName = bodyGO.name;
+            //Debug.Log("bodyGO = " + bodyGO.name + " name = " + index);
             if(bodyGO.name.Contains("head"))
             {
                 head = bodyGO.transform;
             }
-            dictionaryBody.Add(bodyGO.name.Substring(0, index), new BodyPart(bodyGO.transform, header));
+            dictionaryBody.Add(bodyPartName, new BodyPart(bodyGO.transform, header));
         }
         
     }
