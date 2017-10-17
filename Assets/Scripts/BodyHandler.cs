@@ -112,10 +112,9 @@ public class BodyHandler : MonoBehaviour {
             }
         }
 
-        if (Camera.main.transform.parent.gameObject.GetComponent<HeadCameraController>().thirdPerson)
-            head.gameObject.GetComponent<MeshRenderer>().enabled = true;
-        else
-            head.gameObject.GetComponent<MeshRenderer>().enabled = false;
+        HeadCameraController headControl = Camera.main.transform.parent.gameObject.GetComponent<HeadCameraController>();
+
+        
 
         foreach (KeyValuePair<string, BodyPart> b in dictionaryBody)
         {
@@ -123,7 +122,13 @@ public class BodyHandler : MonoBehaviour {
             {
                 GameObject go = b.Value.transform.gameObject;
                 go.GetComponent<MeshRenderer>().enabled = true;
-   
+                if(go.name.Contains("head"))
+                {
+                    if (headControl.thirdPerson)
+                        head.GetComponent<MeshRenderer>().enabled = true;
+                    else
+                        head.GetComponent<MeshRenderer>().enabled = false;
+                }
 
             }
             else
