@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 public class TrackerClient : MonoBehaviour
 {
+    public float rotationTreshold = -0.2588190f;
 	// Filter parameters
 	private bool isNewFrame;
 	private DateTime frameTime;
@@ -150,12 +151,18 @@ public class TrackerClient : MonoBehaviour
 	private void UpdateAvatarBody()
 	{
 		ApplyFilterToJoints();
-      //  Vector3 headRot = UnityEngine.VR.InputTracking.GetLocalRotation(UnityEngine.VR.VRNode.CenterEye).eulerAngles;
+        Vector3 headRot = UnityEngine.VR.InputTracking.GetLocalRotation(UnityEngine.VR.VRNode.CenterEye).eulerAngles;
 
 		// Spine
 		Vector3 spineUp = Utils.GetBoneDirection(spineShoulderJoint.Value, spineBaseJoint.Value);
 		Vector3 spineRight = Utils.GetBoneDirection(rightShoulderJoint.Value, leftShoulderJoint.Value);
 		Vector3 spineForward = Vector3.Cross(spineRight,spineUp);
+
+        float dotprod = Vector3.Dot(spineForward, headRot);
+        if(dotprod < rotationTreshold)
+        {
+            spineForward = -spineForward;
+        } 
 
 		spineBase.position = spineBaseJoint.Value + new Vector3(0.0f, 0.15f, 0.0f);
 		spineBase.rotation = Quaternion.LookRotation(spineForward, spineUp);
