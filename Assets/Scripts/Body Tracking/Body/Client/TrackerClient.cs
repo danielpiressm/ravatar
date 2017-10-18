@@ -140,7 +140,7 @@ public class TrackerClient : MonoBehaviour
 
 		float userHeight = (trackedHuman.body.Joints[BodyJointType.head].y + 0.1f) - lowerFootY;
 		float scaleRatio = userHeight / avatarHeight;
-        bar.transform.position = new Vector3(bar.transform.position.x, userHeight - bardifference, bar.transform.position.z);
+      //  bar.transform.position = new Vector3(bar.transform.position.x, userHeight - bardifference, bar.transform.position.z);
 		spineBase.transform.localScale = new Vector3(scaleRatio, scaleRatio, scaleRatio);
 	}
 
@@ -163,7 +163,7 @@ public class TrackerClient : MonoBehaviour
         {
             spineForward = -spineForward;
         } 
-
+        
 		spineBase.position = spineBaseJoint.Value + new Vector3(0.0f, 0.15f, 0.0f);
 		spineBase.rotation = Quaternion.LookRotation(spineForward, spineUp);
 
