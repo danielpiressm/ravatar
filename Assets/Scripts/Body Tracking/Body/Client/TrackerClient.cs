@@ -17,7 +17,10 @@ public class TrackerClient : MonoBehaviour
 	private string trackedHumanId;
 	private Dictionary<string, Human> humans;
     public Transform bar;
-	// Body transforms and joints
+    // Body transforms and joints
+
+    //neck
+    public Transform neck;
 
 	// Spine
 	public Transform spineBase;
@@ -61,6 +64,10 @@ public class TrackerClient : MonoBehaviour
 	private PointSmoothing rightAnkleJoint;
     private float bardifference = 0.12f;
 
+    Vector3 lastTrackerForward;
+    Vector3 lastCameraForward;
+
+
 	void Start()
 	{
 		isNewFrame = false;
@@ -85,11 +92,15 @@ public class TrackerClient : MonoBehaviour
 		rightHipJoint = new PointSmoothing();
 		rightKneeJoint = new PointSmoothing();
 		rightAnkleJoint = new PointSmoothing();
+
+        lastCameraForward = Camera.main.transform.forward;
+        lastTrackerForward = spineBase.transform.forward;
+        
 	}
 
 	void Update()
 	{
-		if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.PageDown)) // Mouse tap
+		if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.PageDown) ||Input.GetKeyDown(KeyCode.Joystick1Button1)) // Mouse tap
 		{
 			string currentHumanId = GetHumanIdWithHandUp();
 
@@ -151,45 +162,100 @@ public class TrackerClient : MonoBehaviour
 	private void UpdateAvatarBody()
 	{
 		ApplyFilterToJoints();
-        Vector3 headRot = UnityEngine.VR.InputTracking.GetLocalRotation(UnityEngine.VR.VRNode.CenterEye).eulerAngles;
-
-		// Spine
-		Vector3 spineUp = Utils.GetBoneDirection(spineShoulderJoint.Value, spineBaseJoint.Value);
+        Vector3 headRot = Camera.main.transform.forward; //UnityEngine.VR.InputTracking.GetLocalRotation(UnityEngine.VR.VRNode.CenterEye).eulerAngles;
+        
+        // Spine
+        Vector3 spineUp = Utils.GetBoneDirection(spineShoulderJoint.Value, spineBaseJoint.Value);
 		Vector3 spineRight = Utils.GetBoneDirection(rightShoulderJoint.Value, leftShoulderJoint.Value);
 		Vector3 spineForward = Vector3.Cross(spineRight,spineUp);
+        Vector3 projForward = new Vector3(spineForward.x, 0, spineForward.z);
 
-        float dotprod = Vector3.Dot(spineForward, headRot);
-        if(dotprod < rotationTreshold)
+        float dotprod = Vector3.Dot(projForward, headRot);
+        float dotprodTracker = Vector3.Dot(projForward, new Vector3(lastTrackerForward.x,0, lastTrackerForward.z));
+        if (dotprod < rotationTreshold || dotprodTracker < rotationTreshold)
         {
             spineForward = -spineForward;
-        } 
+        //    Debug.Log("passssssseeeeeeeii");
         
-		spineBase.position = spineBaseJoint.Value + new Vector3(0.0f, 0.15f, 0.0f);
-		spineBase.rotation = Quaternion.LookRotation(spineForward, spineUp);
+            Vector3 spineRight2 = Utils.GetBoneDirection(leftShoulderJoint.Value, rightShoulderJoint.Value);
+            Vector3 spineForward2 = Vector3.Cross(spineRight, spineUp);
+            spineForward = Vector3.Cross(spineRight, spineUp);
+            Debug.Log("$$$$");
 
-		// Left Arm
-		leftShoulder.rotation = Utils.GetQuaternionFromRightUp(-Utils.GetBoneDirection(leftShoulderJoint.Value, spineShoulderJoint.Value), spineUp);
-		leftElbow.rotation = Utils.GetQuaternionFromRightUp(-Utils.GetBoneDirection(leftWristJoint.Value, leftElbowJoint.Value), spineUp);
-		leftArm.rotation = Utils.GetQuaternionFromRightUp(-Utils.GetBoneDirection(leftElbowJoint.Value, leftShoulderJoint.Value), spineUp);
+            if(spineForward != spineForward2 )
+            {
+                Debug.Log("-----");
+            }
 
-		// Left Leg
-		leftHip.rotation = Utils.GetQuaternionFromUpRight(-Utils.GetBoneDirection(leftKneeJoint.Value, leftHipJoint.Value), spineRight);
-		leftKnee.rotation = Utils.GetQuaternionFromUpRight(-Utils.GetBoneDirection(leftAnkleJoint.Value, leftKneeJoint.Value), spineRight);
+            Debug.DrawRay(spineBase.transform.position, spineForward, Color.blue);
+            Debug.DrawRay(spineBase.transform.position, spineForward2,Color.red);
 
-		// Right Arm
-		rightShoulder.rotation = Utils.GetQuaternionFromRightUp(Utils.GetBoneDirection(rightShoulderJoint.Value, spineShoulderJoint.Value), spineUp);
-		rightElbow.rotation = Utils.GetQuaternionFromRightUp(Utils.GetBoneDirection(rightWristJoint.Value, rightElbowJoint.Value), spineUp);
-		rightArm.rotation = Utils.GetQuaternionFromRightUp(Utils.GetBoneDirection(rightElbowJoint.Value, rightShoulderJoint.Value), spineUp);
+            //spineRight = Utils.GetBoneDirection(leftShoulderJoint.Value, rightShoulderJoint.Value);
+            //spineForward = Vector3.Cross(spineRight, spineUp);
 
-		// Right Leg
-		rightHip.rotation = Utils.GetQuaternionFromUpRight(-Utils.GetBoneDirection(rightKneeJoint.Value, rightHipJoint.Value), spineRight);
-		rightKnee.rotation = Utils.GetQuaternionFromUpRight(-Utils.GetBoneDirection(rightAnkleJoint.Value, rightKneeJoint.Value), spineRight);
-	}
+            spineBase.position = spineBaseJoint.Value + new Vector3(0.0f, 0.15f, 0.0f);
+            spineBase.rotation = Quaternion.LookRotation(spineForward, spineUp);
 
-	/// <summary>
-	/// Applies the noise filter to joints.
-	/// </summary>
-	private void ApplyFilterToJoints()
+            // Left Arm
+            leftShoulder.rotation = Utils.GetQuaternionFromRightUp(-Utils.GetBoneDirection(rightShoulderJoint.Value, spineShoulderJoint.Value), spineUp);
+            leftElbow.rotation = Utils.GetQuaternionFromRightUp(-Utils.GetBoneDirection(rightWristJoint.Value, rightElbowJoint.Value), spineUp);
+            leftArm.rotation = Utils.GetQuaternionFromRightUp(-Utils.GetBoneDirection(rightElbowJoint.Value, rightShoulderJoint.Value), spineUp);
+
+        //    // Left Leg
+            leftHip.rotation = Utils.GetQuaternionFromUpRight(-Utils.GetBoneDirection(leftKneeJoint.Value, leftHipJoint.Value), spineRight);
+            leftKnee.rotation = Utils.GetQuaternionFromUpRight(-Utils.GetBoneDirection(leftAnkleJoint.Value, leftKneeJoint.Value), spineRight);
+
+        //    // Right Arm
+            rightShoulder.rotation = Utils.GetQuaternionFromRightUp(Utils.GetBoneDirection(leftShoulderJoint.Value, spineShoulderJoint.Value),spineUp);
+            rightElbow.rotation = Utils.GetQuaternionFromRightUp( Utils.GetBoneDirection(leftWristJoint.Value, leftElbowJoint.Value),spineUp);
+            rightArm.rotation = Utils.GetQuaternionFromRightUp( Utils.GetBoneDirection(leftElbowJoint.Value, leftShoulderJoint.Value),spineUp);
+
+            // Right Leg
+            rightHip.rotation = Utils.GetQuaternionFromUpRight(-Utils.GetBoneDirection(leftKneeJoint.Value, leftHipJoint.Value), spineRight);
+            rightKnee.rotation = Utils.GetQuaternionFromUpRight(-Utils.GetBoneDirection(leftAnkleJoint.Value, leftKneeJoint.Value), spineRight);
+           // InputTracking.Recenter();
+            // neck.transform.eulerAngles = headRot;
+        }
+        else
+        {
+            spineBase.position = spineBaseJoint.Value + new Vector3(0.0f, 0.15f, 0.0f);
+            spineBase.rotation = Quaternion.LookRotation(spineForward, spineUp);
+
+            // Left Arm
+            leftShoulder.rotation = Utils.GetQuaternionFromRightUp(-Utils.GetBoneDirection(leftShoulderJoint.Value, spineShoulderJoint.Value), spineUp);
+            leftElbow.rotation = Utils.GetQuaternionFromRightUp(-Utils.GetBoneDirection(leftWristJoint.Value, leftElbowJoint.Value), spineUp);
+            leftArm.rotation = Utils.GetQuaternionFromRightUp(-Utils.GetBoneDirection(leftElbowJoint.Value, leftShoulderJoint.Value), spineUp);
+
+            // Left Leg
+            leftHip.rotation = Utils.GetQuaternionFromUpRight(-Utils.GetBoneDirection(leftKneeJoint.Value, leftHipJoint.Value), spineRight);
+            leftKnee.rotation = Utils.GetQuaternionFromUpRight(-Utils.GetBoneDirection(leftAnkleJoint.Value, leftKneeJoint.Value), spineRight);
+
+            // Right Arm
+            rightShoulder.rotation = Utils.GetQuaternionFromRightUp(Utils.GetBoneDirection(rightShoulderJoint.Value, spineShoulderJoint.Value), spineUp);
+            rightElbow.rotation = Utils.GetQuaternionFromRightUp(Utils.GetBoneDirection(rightWristJoint.Value, rightElbowJoint.Value), spineUp);
+            rightArm.rotation = Utils.GetQuaternionFromRightUp(Utils.GetBoneDirection(rightElbowJoint.Value, rightShoulderJoint.Value), spineUp);
+
+            // Right Leg
+            rightHip.rotation = Utils.GetQuaternionFromUpRight(-Utils.GetBoneDirection(rightKneeJoint.Value, rightHipJoint.Value), spineRight);
+            rightKnee.rotation = Utils.GetQuaternionFromUpRight(-Utils.GetBoneDirection(rightAnkleJoint.Value, rightKneeJoint.Value), spineRight);
+        }
+
+        lastTrackerForward = spineForward;
+        lastCameraForward = Camera.main.transform.forward;
+
+        //Debug.DrawRay(leftShoulder.transform.position, leftShoulder.transform.up, Color.green);
+        //Debug.DrawRay(leftShoulder.transform.position, leftShoulder.transform.forward, Color.blue);
+        //Debug.DrawRay(leftShoulder.transform.position, leftShoulder.transform.right, Color.red);
+
+       /* Debug.DrawRay(rightShoulder.transform.position, rightShoulder.transform.up, Color.green);
+        Debug.DrawRay(rightShoulder.transform.position, rightShoulder.transform.forward, Color.blue);
+        Debug.DrawRay(rightShoulder.transform.position, rightShoulder.transform.right, Color.red);*/
+    }
+
+    /// <summary>
+    /// Applies the noise filter to joints.
+    /// </summary>
+    private void ApplyFilterToJoints()
 	{
 		// Spine
 		spineBaseJoint.ApplyFilter(trackedHuman.body.Joints[BodyJointType.spineBase], isNewFrame, frameTime);
