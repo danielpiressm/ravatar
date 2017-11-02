@@ -57,6 +57,11 @@ public class TestTask : MonoBehaviour {
 
     float timeCollidingWithStuff = 0.0f;
 
+
+    
+    int countTriggers = 0;
+    GameObject[] listObjectsInEachTask;
+
     // Use this for initialization
     void Start () {
         //currentTask = Tasks.Task1;
@@ -76,8 +81,12 @@ public class TestTask : MonoBehaviour {
         //se nao houver diretorios
 
         System.IO.Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/user"+i+ avatarType.ToString());
-        
-        
+
+        listObjectsInEachTask = new GameObject[3];
+        listObjectsInEachTask[0] = objectsTask1;
+        listObjectsInEachTask[1] = objectsTask2;
+        listObjectsInEachTask[2] = objectsTask3;
+
         pathDirectory = Directory.GetCurrentDirectory() + "/user" + i + avatarType.ToString() + "/";
         activeCollisions = new Dictionary<string, List<ActiveCollision>>();
         finishedCollisions = new List<FinishedCollision>();
@@ -236,6 +245,25 @@ public class TestTask : MonoBehaviour {
         {
             obj.transform.GetChild(i).gameObject.SetActive(state);
         }
+    }
+
+    void triggerPlus()
+    {
+        if(countTriggers %2 == 1)
+        {
+            //eh impar
+        }
+        else if(countTriggers %2 == 0)
+        {
+            if((int) currentTask > 0)
+            {
+                SetActiveChildren( listObjectsInEachTask[(int)currentTask - 1], false);
+                currentTask = (Tasks)currentTask++;
+            }
+            SetActiveChildren(listObjectsInEachTask[(int)currentTask], true);
+            UpdateReport();
+        }
+        countTriggers++;
     }
 
     void nextTask(string triggerId)

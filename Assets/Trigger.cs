@@ -23,9 +23,10 @@ public class Trigger : MonoBehaviour {
         }
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerExit(Collider other)
     {
         //Debug.Log("Contact " + other.contactOffset);
-        SendMessageUpwards("nextTask", triggerId);
+        SendMessageUpwards("triggerPlus");
+        //SendMessageUpwards("nextTask", triggerId);
     }
 }
