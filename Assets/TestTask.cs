@@ -251,7 +251,8 @@ public class TestTask : MonoBehaviour {
     {
         if(countTriggers %2 == 1)
         {
-            //eh impar
+            // eh impar
+            // e nao eh o trigger que eu quero
         }
         else if(countTriggers %2 == 0)
         {
