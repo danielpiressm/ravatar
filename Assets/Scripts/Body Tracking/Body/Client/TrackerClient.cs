@@ -171,7 +171,7 @@ public class TrackerClient : MonoBehaviour
         Vector3 projForward = new Vector3(spineForward.x, 0, spineForward.z);
 
         float dotprod = Vector3.Dot(projForward, headRot);
-        Debug.Log("DOT " + dotprod);
+        //Debug.Log("DOT " + dotprod);
          Debug.DrawRay(spineBase.transform.position, spineForward, Color.blue);
 
         if (dotprod < rotationTreshold )
