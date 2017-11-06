@@ -5,6 +5,8 @@ public class Trigger : MonoBehaviour {
 
     public string triggerId = "";
 
+    public int countEnters = 0;
+
 	// Use this for initialization
 	void Start () {
 	
@@ -23,10 +25,20 @@ public class Trigger : MonoBehaviour {
         }
     }
 
+    void OnTriggerEnter(Collider other)
+    {
+        if (countEnters == 0 || triggerId == "walkTrigger2")
+            SendMessageUpwards("triggerPlus", triggerId);
+        countEnters++;
+        Debug.Log("countenters " + countEnters);
+    }
+
     void OnTriggerExit(Collider other)
     {
-        //Debug.Log("Contact " + other.contactOffset);
-        SendMessageUpwards("triggerPlus");
-        //SendMessageUpwards("nextTask", triggerId);
+        countEnters--;
+        if (countEnters == 0)
+            SendMessageUpwards("startCounter", triggerId);
+        Debug.Log("countenters " + countEnters);
+        //SendMessageUpwards("startTheTask", triggerId);
     }
 }

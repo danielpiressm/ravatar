@@ -82,6 +82,7 @@ public class BodyHandler : MonoBehaviour {
             {
                 head = bodyGO.transform;
             }
+            bodyGO.GetComponent<BoxCollider>().isTrigger = true;
             dictionaryBody.Add(bodyPartName, new BodyPart(bodyGO.transform, header));
         }
         
@@ -141,24 +142,23 @@ public class BodyHandler : MonoBehaviour {
             
             if (logBody && !isAFinger(b.Value.transform.gameObject))
             {
-                string str = string.Join(",", new string[]
-                {
-                     tTask.getCurrentTask(),
-                     b.Value.transform.position.x.ToString(),
-                     b.Value.transform.position.y.ToString(),
-                     b.Value.transform.position.z.ToString(),
-                     b.Value.transform.eulerAngles.x.ToString(),
-                     b.Value.transform.eulerAngles.y.ToString(),
-                     b.Value.transform.eulerAngles.z.ToString(),
-                     head.transform.position.x.ToString(),
-                     head.transform.position.y.ToString(),
-                     head.transform.position.z.ToString(),
-                     head.transform.eulerAngles.x.ToString(),
-                     head.transform.eulerAngles.y.ToString(),
-                     head.transform.eulerAngles.z.ToString(),
-                     Time.realtimeSinceStartup.ToString(),
-                     "\n"
-                 });
+                string str =
+                     tTask.getCurrentTask() + "," +
+                     b.Value.transform.position.x.ToString() + "," +
+                     b.Value.transform.position.y.ToString() + "," +
+                     b.Value.transform.position.z.ToString() + "," +
+                     b.Value.transform.eulerAngles.x.ToString() + "," +
+                     b.Value.transform.eulerAngles.y.ToString() + "," +
+                     b.Value.transform.eulerAngles.z.ToString() + "," +
+                     head.transform.position.x.ToString() + "," +
+                     head.transform.position.y.ToString() + "," +
+                     head.transform.position.z.ToString() + "," +
+                     head.transform.eulerAngles.x.ToString() + "," +
+                     head.transform.eulerAngles.y.ToString() + "," +
+                     head.transform.eulerAngles.z.ToString() + "," +
+                     Time.realtimeSinceStartup.ToString() + "," +
+                     "\n";
+                
 
 
 

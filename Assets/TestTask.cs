@@ -3,7 +3,7 @@ using System.Collections;
 using System.IO;
 using System.Collections.Generic;
 
-public enum Tasks { Task1, Task2, Task3, Task4, ReachGreenLollipop0thTime, ReachRedLollipop1stTime, ReachRedLollipop2ndTime, ReachGreenLollipop1stTime, ReachGreenLollipop2ndTime, ThrowingObjects, Completed };
+public enum Tasks { NotStarted, Task1, Task2, Task3, Completed  };
 
 
 
@@ -49,6 +49,7 @@ public class TestTask : MonoBehaviour {
     int countFullBodiesStr = 0;
     private string pathHeaderStr;
 
+    
     Dictionary<string, List<ActiveCollision>> activeCollisions;
     List<FinishedCollision> finishedCollisions;
     Dictionary<string, FinishedCollision> finishedCollisionsAux;
@@ -57,16 +58,17 @@ public class TestTask : MonoBehaviour {
 
     float timeCollidingWithStuff = 0.0f;
 
+    bool passedOnTrigger2 = false;
 
     
     int countTriggers = 0;
-    GameObject[] listObjectsInEachTask;
+    Dictionary<string,GameObject> listObjectsInEachTask;
 
     // Use this for initialization
     void Start () {
         //currentTask = Tasks.Task1;
         //uncomment this for the task
-        currentTask = Tasks.ReachGreenLollipop0thTime;
+        currentTask = Tasks.NotStarted;
         //with avatars, change for torso tracking
         _trackedObj = Camera.main;
         lastPos = _trackedObj.transform.position;
@@ -82,10 +84,12 @@ public class TestTask : MonoBehaviour {
 
         System.IO.Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/user"+i+ avatarType.ToString());
 
-        listObjectsInEachTask = new GameObject[3];
-        listObjectsInEachTask[0] = objectsTask1;
-        listObjectsInEachTask[1] = objectsTask2;
-        listObjectsInEachTask[2] = objectsTask3;
+
+
+        listObjectsInEachTask = new Dictionary<string, GameObject>();
+        listObjectsInEachTask[Tasks.Task1.ToString()] = objectsTask1;
+        listObjectsInEachTask[Tasks.Task2.ToString()] = objectsTask2;
+        listObjectsInEachTask[Tasks.Task3.ToString()] = objectsTask3;
 
         pathDirectory = Directory.GetCurrentDirectory() + "/user" + i + avatarType.ToString() + "/";
         activeCollisions = new Dictionary<string, List<ActiveCollision>>();
@@ -127,16 +131,7 @@ public class TestTask : MonoBehaviour {
             return time - startTime;
     }
 
-    void serializeCollision2(string str)
-    {
-        float currentTime = Time.realtimeSinceStartup;
-        //"$" means collision
-        logStr += "$"+currentTask.ToString() + "," + (getTaskTime(currentTime - lastTimeBetweenCollisions)) +  ","+ getTaskTime(currentTime) +   "\n";
-        //lastTimeBetweenTasks = currentTime;
-        collisionLogStr += str + "," + (getTaskTime(currentTime) - getTaskTime(lastTimeBetweenCollisions)) + "," + getTaskTime(currentTime)+ "," + currentTask + "\n";
-        Debug.Log("Time : " + currentTime + " startTime : " + startTime + "lastCollision" + lastTimeBetweenCollisions);
-        lastTimeBetweenCollisions = currentTime;
-    }
+    
 
     public void serializeCollision(string str)
     {
@@ -190,14 +185,7 @@ public class TestTask : MonoBehaviour {
       
     }
 
-    void UpdateReport( )
-    {
-        float currentTime = Time.realtimeSinceStartup;
-        logStr += currentTask.ToString() + "," + (getTaskTime(currentTime) - getTaskTime(lastTimeBetweenTasks))+ ","+ getTaskTime(currentTime)+"\n";
-        lastTimeBetweenTasks = currentTime;
-        lastTimeBetweenCollisions = currentTime;
-        lastTimeBetweenTriggers = currentTime;
-    }
+    
 
     
 
@@ -247,113 +235,79 @@ public class TestTask : MonoBehaviour {
         }
     }
 
-    void triggerPlus()
+    void triggerPlus(string triggerId)
     {
-        if(countTriggers %2 == 1)
+        if(triggerId == "walkTrigger2")
         {
-            // eh impar
+            passedOnTrigger2 = true;
+            Debug.Log("passedOntrigger2");
             // e nao eh o trigger que eu quero
         }
-        else if(countTriggers %2 == 0)
+        else if(triggerId == "walkTrigger1")
         {
-            if((int) currentTask > 0)
+            if (currentTask == Tasks.NotStarted || passedOnTrigger2 == true )
             {
-                SetActiveChildren( listObjectsInEachTask[(int)currentTask - 1], false);
-                currentTask = (Tasks)currentTask++;
+                if ((int)currentTask > 0)
+                {
+                    SetActiveChildren(listObjectsInEachTask[currentTask.ToString()], false);
+                    UpdateReport();
+                    
+                    Debug.Log("time = " + getTaskTime(Time.realtimeSinceStartup));
+                }
+                if (currentTask < Tasks.Task3)
+                {
+                    currentTask++;
+                    listObjectsInEachTask[currentTask.ToString()].gameObject.SetActive(true);
+                }
+                
+
+                passedOnTrigger2 = false;
             }
-            SetActiveChildren(listObjectsInEachTask[(int)currentTask], true);
-            UpdateReport();
+            else
+            {
+
+            }
+            
         }
-        countTriggers++;
+        
     }
+
+    void startCounter(string triggerId)
+    {
+        if (triggerId == "walkTrigger1")
+        {
+            startTime = Time.realtimeSinceStartup;
+            Debug.Log("starting counter");
+        }
+            
+        //Start the counter
+    }
+
+
+    
+
+    void UpdateReport()
+    {
+        float currentTime = Time.realtimeSinceStartup;
+        logStr += currentTask.ToString() + "," + (getTaskTime(currentTime) - getTaskTime(lastTimeBetweenTasks)) + "," + getTaskTime(currentTime) + "\n";
+        lastTimeBetweenTasks = currentTime;
+        lastTimeBetweenCollisions = currentTime;
+        lastTimeBetweenTriggers = currentTime;
+    }
+
 
     void nextTask(string triggerId)
     {
         if(triggerId == "walkTrigger1")
         {
-            if(currentTask == Tasks.Task2)
-            {
-                UpdateReport();
-                currentTask = Tasks.ReachGreenLollipop1stTime;
-                Debug.Log(currentTask.ToString());
-                
-                //objectsTask2.SetActive(false);
-                //objectsTask3.SetActive(true);
-                //Debug.Log("TEST OVER");
-                //CompleteReport();
-            }
+            
         }
 
         if(triggerId == "walkTrigger2")
         {
-            if(currentTask == Tasks.Task1)
-            {
-                UpdateReport();
-                currentTask = Tasks.ReachRedLollipop1stTime;
-                Debug.Log(currentTask.ToString());
-            }
-            else if(currentTask == Tasks.Task3)
-            {
-                UpdateReport();
-                currentTask = Tasks.ReachRedLollipop2ndTime;
-                Debug.Log(currentTask.ToString());
-
-                //currentTask = Tasks.Completed;
-                //CompleteReport();
-            }
-        }
-        if(triggerId == "redLollipop")
-        {
             
-            if(currentTask == Tasks.ReachRedLollipop1stTime)
-            {
-                UpdateReport();
-                currentTask = Tasks.Task2;
-                SetActiveChildren(objectsTask1, false);
-                SetActiveChildren(objectsTask2, true);
-                Debug.Log(currentTask.ToString());
-            }
-            else if(currentTask == Tasks.ReachRedLollipop2ndTime)
-            {
-                UpdateReport();
-                lastTimeBetweenCollisions = Time.realtimeSinceStartup;
-                currentTask = Tasks.ThrowingObjects;
-                Debug.Log("Start Throwing Object Task");
-                SetActiveChildren(objectsTask3, false);
-                SetActiveChildren(objectTask4,true);
-                SetActiveChildren(pirulito, false);
-                //CompleteReport();
-                //throwing objectsToBeImplemented
-            }
         }
-        else if(triggerId == "greenLollipop")
-        {
-            if (currentTask == Tasks.ReachGreenLollipop0thTime)
-            {
-                currentTask = Tasks.Task1;
-                SetActiveChildren(objectsTask1, true);
-                Debug.Log(currentTask.ToString());
-                lastTimeBetweenTasks = Time.realtimeSinceStartup;
-                startTime = lastTimeBetweenTasks;
-                Debug.Log("startTime = " + startTime);
-            }
-            if (currentTask == Tasks.ReachGreenLollipop1stTime)
-            {
-                UpdateReport();
-                currentTask = Tasks.Task3;
-                SetActiveChildren(objectsTask2, false);
-                SetActiveChildren(objectsTask3, true);
-            }
-        }
-        else if( triggerId == "objectShooter")
-        {
-            if(currentTask == Tasks.ThrowingObjects)
-            {
-                SetActiveChildren(objectTask4, false);
-                CompleteReport();
-                currentTask = Tasks.Completed;
-            }
-        }
+        
     }
 
     //collisionStuff
