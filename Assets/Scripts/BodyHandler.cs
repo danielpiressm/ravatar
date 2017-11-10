@@ -163,18 +163,28 @@ public class BodyHandler : MonoBehaviour {
 
 
                 b.Value.appendToString(str);
-                
 
+                float timeToWrite = 0.0f;
                 countStrings++;
-                if (countStrings > 20)
+                float x = 0;
+                if (countStrings > 500)
                 {
                     //writeToFile
                     System.IO.File.AppendAllText(tTask.getPathDirectory() + "/" + b.Key +".csv" , b.Value.strToPersist);
+                    StartCoroutine(printToFile(b.Key, b.Value.strToPersist, x));
                     b.Value.clearString();
+                    timeToWrite += 0.5f;
                 }
             }
 
         }
 
+    }
+
+    private IEnumerator printToFile(string str, string path, float time)
+    {
+        yield return new WaitForSeconds(time);
+        System.IO.File.AppendAllText(tTask.getPathDirectory() + "/fullbodyLog/" + path, str);
+        yield return null;
     }
 }
