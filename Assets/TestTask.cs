@@ -57,8 +57,11 @@ public class TestTask : MonoBehaviour {
     FinishedCollision finishedAux;
 
     float timeCollidingWithStuff = 0.0f;
+    Dictionary<Tasks,float> timeCollidingWithStuffPerTask;
+    Dictionary<Tasks, float> collisionCountPerTask;
 
     bool passedOnTrigger2 = false;
+
 
     
     int countTriggers = 0;
@@ -97,6 +100,13 @@ public class TestTask : MonoBehaviour {
         finishedCollisionsAux = new Dictionary<string, FinishedCollision>();
         collisionsPerJoint = new Dictionary<string, ActiveCollision>();
 
+        timeCollidingWithStuffPerTask = new Dictionary<Tasks, float>();
+        collisionCountPerTask = new Dictionary<Tasks, float>();
+        for(int j = 0; j < (int) Tasks.Completed;j++)
+        {
+            timeCollidingWithStuffPerTask.Add((Tasks)j, 0);
+            collisionCountPerTask.Add((Tasks)j, 0);
+        }
     }
 
     public AvatarType getAvatarType()
@@ -174,9 +184,26 @@ public class TestTask : MonoBehaviour {
     {
 
         logStr += "TotalTime" + getTaskTime(Time.realtimeSinceStartup)+"\n";
-        System.IO.File.WriteAllText( pathDirectory+"/"+ collisionLogfileName + ".csv",collisionLogStr);
-        System.IO.File.WriteAllText( pathDirectory+"/"+logFileName + ".csv", logStr);
         
+        System.IO.File.WriteAllText( pathDirectory+"/"+logFileName + ".csv", logStr);
+
+
+        collisionLogStr += "!ObjectsCollided," + finishedCollisions.Count + ",TotalTimeCollided(s)," + timeCollidingWithStuff + "\n";
+        for (int i = 0; i < timeCollidingWithStuffPerTask.Count; i++)
+        {
+            collisionLogStr += "@Task," + (Tasks)i +  ",CollisionCount," + collisionCountPerTask[(Tasks)i] + ",TotalTimeCollided(s)," + timeCollidingWithStuffPerTask[(Tasks)i] + "\n";
+        }
+
+
+
+        foreach (KeyValuePair<string, ActiveCollision> collPerJoint in collisionsPerJoint)
+        {
+            collisionLogStr += "%JointName," + collPerJoint.Key + "," + "CollisionCount," + collPerJoint.Value.collisionCount + ",TimeCollided," + collPerJoint.Value.timeInit + "\n";
+        }
+        System.IO.File.WriteAllText(pathDirectory + "/" + collisionLogfileName + ".csv", collisionLogStr);
+
+
+
         //else
         {
             System.IO.File.WriteAllText(pathDirectory + "/" + pathLogFileName + ".csv", pathStr);
@@ -358,6 +385,7 @@ public class TestTask : MonoBehaviour {
                         collisionsPerJoint[jointName].timeInit += (time - activeCollisions[colliderName][i].timeInit);
                         collisionsPerJoint[jointName].collisionCount++;
                     }
+                    collisionCountPerTask[currentTask]++;
 
 
                     if (activeCollisions[colliderName][i].first)
@@ -398,6 +426,7 @@ public class TestTask : MonoBehaviour {
                         finishedCollisions.Add(finishedCollisionsAux[colliderName]);
 
                         timeCollidingWithStuff += (finishedCollisionsAux[colliderName].finishTime - finishedCollisionsAux[colliderName].startTime);
+                        timeCollidingWithStuffPerTask[currentTask] += (finishedCollisionsAux[colliderName].finishTime - finishedCollisionsAux[colliderName].startTime);
                         //finishedCollisions.FindIndex()
                         //finishedCollisionsAux[colliderName] = null;
                         finishedCollisionsAux.Remove(colliderName);
