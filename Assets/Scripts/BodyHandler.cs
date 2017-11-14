@@ -64,7 +64,7 @@ public class BodyHandler : MonoBehaviour {
         dictionaryBody = new Dictionary<string, BodyPart>();
 
         tTask = this.GetComponent<TestTask>();
-        header = "Task,PosX,PosY,PosZ,RotX,RotY,RotZ,HeadPosX,HeadPosY,HeadPosZ,HeadRotX,HeadRotY,HeadRotZ,Time\n";
+        header = "Task,PosX,PosY,PosZ,RotX,RotY,RotZ,HeadPosX,HeadPosY,HeadPosZ,HeadRotX,HeadRotY,HeadRotZ,Time,Task\n";
 
         jointSpheresGO = GameObject.FindGameObjectsWithTag("jointSphere");
         bodyPartsGO = GameObject.FindGameObjectsWithTag("boneCube");
@@ -157,6 +157,7 @@ public class BodyHandler : MonoBehaviour {
                      head.transform.eulerAngles.y.ToString() + "," +
                      head.transform.eulerAngles.z.ToString() + "," +
                      Time.realtimeSinceStartup.ToString() + "," +
+                     tTask.getCurrentTask()+
                      "\n";
                 
 

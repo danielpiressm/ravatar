@@ -27,6 +27,10 @@ public class Trigger : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.tag != "boneCube" && other.gameObject.tag != "jointSphere")
+        {
+            return;
+        }
         if (countEnters == 0 || triggerId == "walkTrigger2")
             SendMessageUpwards("triggerPlus", triggerId);
         countEnters++;
@@ -35,6 +39,10 @@ public class Trigger : MonoBehaviour {
 
     void OnTriggerExit(Collider other)
     {
+        if (other.gameObject.tag != "boneCube" && other.gameObject.tag != "jointSphere")
+        {
+            return;
+        }
         countEnters--;
         if (countEnters == 0)
             SendMessageUpwards("startCounter", triggerId);

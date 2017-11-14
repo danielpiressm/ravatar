@@ -26,6 +26,7 @@ public class TestTask : MonoBehaviour {
     public string separator = ";";
 
     public Tasks currentTask;
+    float totalTime =0.0f;
 
     
     public GameObject objectsTask1; 
@@ -66,6 +67,15 @@ public class TestTask : MonoBehaviour {
     
     int countTriggers = 0;
     Dictionary<string,GameObject> listObjectsInEachTask;
+    private bool completed;
+
+    private void OnDisable()
+    {
+        Debug.Log("e aqui?"+ currentTask + " " + currentTask.ToString());
+        if(currentTask == Tasks.Completed)
+            CompleteReport();
+    }
+
 
     // Use this for initialization
     void Start () {
@@ -76,16 +86,17 @@ public class TestTask : MonoBehaviour {
         _trackedObj = Camera.main;
         lastPos = _trackedObj.transform.position;
         InitializeReport();
+        separator = ",";
         
         int i = 1;
         
-        while(Directory.Exists(Directory.GetCurrentDirectory()+"/user"+i+avatarType.ToString()))
+        while(Directory.Exists(Directory.GetCurrentDirectory()+"/user"+i+"_"+avatarType.ToString()))
         {
             i++;
         }
         //se nao houver diretorios
 
-        System.IO.Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/user"+i+ avatarType.ToString());
+        System.IO.Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/user"+i+ "_"+ avatarType.ToString());
 
 
 
@@ -93,8 +104,9 @@ public class TestTask : MonoBehaviour {
         listObjectsInEachTask[Tasks.Task1.ToString()] = objectsTask1;
         listObjectsInEachTask[Tasks.Task2.ToString()] = objectsTask2;
         listObjectsInEachTask[Tasks.Task3.ToString()] = objectsTask3;
+        listObjectsInEachTask[Tasks.Completed.ToString()] = objectTask4;
 
-        pathDirectory = Directory.GetCurrentDirectory() + "/user" + i + avatarType.ToString() + "/";
+        pathDirectory = Directory.GetCurrentDirectory() + "/user" + i + "_"+avatarType.ToString() + "/";
         activeCollisions = new Dictionary<string, List<ActiveCollision>>();
         finishedCollisions = new List<FinishedCollision>();
         finishedCollisionsAux = new Dictionary<string, FinishedCollision>();
@@ -145,8 +157,8 @@ public class TestTask : MonoBehaviour {
 
     public void serializeCollision(string str)
     {
-        testCollision += (str+","+currentTask.ToString());
-        System.IO.File.AppendAllText(pathDirectory + collisionLogfileName, str);
+        collisionLogStr += str;
+        System.IO.File.AppendAllText(pathDirectory + collisionLogfileName + ".csv", str);
     }
 
     void serializeBallCollision(string str)
@@ -167,25 +179,21 @@ public class TestTask : MonoBehaviour {
 
     void InitializeReport()
     {
-        //oldVersion of collision Log
-        collisionLogStr = "Joint" + separator + "PosX" + separator + "PosY" + separator + "PosZ" + separator + "RotX" + separator + "RotY" + separator + "RotZ" + separator +
-                        "ColliderName" + separator + "PosColliderX" + separator + "PosColliderY" + separator + "PosColliderZ" + separator + "RotColliderX" + separator + "RotColliderY" +
-                        separator + "RotColliderZ" + separator + "ErrorX" + separator + "ErrorY" + separator + "ErrorZ" + separator+ "PositionColliderTransformedX"+ separator + "PositionColliderTransformedY"+separator+"PositionColliderTransformedZ"+ separator +
-                        "CameraPositionX"+ separator + "CameraPositionY" + separator + "CameraPositionZ" + separator + "CameraRotationX" + separator + "CameraRotationY" + separator + "CameraRotationZ" + separator + 
-                        "TimeElapsed"+ separator + "CurrentTime"+ separator + "CurrentTask"+"\n";
-        //new version of collisionLog
-        testCollision = "Joint,PosX,PosY,PosZ,RotX,RotY,RotZ,ColliderName,PosColliderX,PosColliderY,PosColliderZ,RotColliderX,RotColliderY,RotColliderZ,ErrorX,ErrorY,ErrorZ,Error2X,Error2Y,Error2Z,headPosX,headPosY,headPosZ,cameraPosX,cameraPosY,cameraPosZ,TimeElapsed,TimeStart,TimeFinish,currentTask\n";
+        collisionLogStr = "Joint,PosX,PosY,PosZ,RotX,RotY,RotZ,ColliderName,PosColliderX,PosColliderY,PosColliderZ,RotColliderX,RotColliderY,RotColliderZ,ErrorX,ErrorY,ErrorZ,Error2X,Error2Y,Error2Z,headPosX,headPosY,headPosZ,cameraPosX,cameraPosY,cameraPosZ,TimeElapsed,TimeStart,TimeFinish,Task\n";
+        
         logStr = "TriggerNum" + separator + "TimeElapsed" + separator + "CurrentTime\n";
         pathStr = "Task,Trigger,currentPosX,currentPosY,currentPosZ,pathElapsedX,pathElapsedY,pathElapsedZ,rotX,rotY,rotZ,magnitude\n";
         pathHeaderStr = "Task,Trigger,currentPosX,currentPosY,currentPosZ,pathElapsedX,pathElapsedY,pathElapsedZ,rotX,rotY,rotZ,magnitude,CameraPosX,CameraPosY,CameraPosZ,CameraRotX,CameraRotY,CameraRotZ\n";
+
+
     }
 
     void CompleteReport()
     {
-
-        logStr += "TotalTime" + getTaskTime(Time.realtimeSinceStartup)+"\n";
+        Debug.Log("cheguei aqui");
+        logStr += "TotalTime," + totalTime+"\n";
         
-        System.IO.File.WriteAllText( pathDirectory+"/"+logFileName + ".csv", logStr);
+        System.IO.File.WriteAllText( pathDirectory+"/"+logFileName + ".csv" , logStr);
 
 
         collisionLogStr += "!ObjectsCollided," + finishedCollisions.Count + ",TotalTimeCollided(s)," + timeCollidingWithStuff + "\n";
@@ -204,10 +212,7 @@ public class TestTask : MonoBehaviour {
 
 
 
-        //else
-        {
-            System.IO.File.WriteAllText(pathDirectory + "/" + pathLogFileName + ".csv", pathStr);
-        }
+        System.IO.File.WriteAllText(pathDirectory + "/" + pathLogFileName + ".csv", pathStr);
         
       
     }
@@ -281,7 +286,7 @@ public class TestTask : MonoBehaviour {
                     
                     Debug.Log("time = " + getTaskTime(Time.realtimeSinceStartup));
                 }
-                if (currentTask < Tasks.Task3)
+                if (currentTask < Tasks.Completed)
                 {
                     currentTask++;
                     listObjectsInEachTask[currentTask.ToString()].gameObject.SetActive(true);
@@ -316,7 +321,8 @@ public class TestTask : MonoBehaviour {
     void UpdateReport()
     {
         float currentTime = Time.realtimeSinceStartup;
-        logStr += currentTask.ToString() + "," + (getTaskTime(currentTime) - getTaskTime(lastTimeBetweenTasks)) + "," + getTaskTime(currentTime) + "\n";
+        logStr += currentTask.ToString() + "," + (getTaskTime(currentTime)) + "," + Time.realtimeSinceStartup + "\n";
+        totalTime += getTaskTime(currentTime);
         lastTimeBetweenTasks = currentTime;
         lastTimeBetweenCollisions = currentTime;
         lastTimeBetweenTriggers = currentTime;

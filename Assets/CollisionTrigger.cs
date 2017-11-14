@@ -130,40 +130,39 @@ public class CollisionTrigger : MonoBehaviour
 
 
         //rotacao da cabeca ou da camera (eu voto pela camera :-))
-        string str = string.Join(",", new string[]
-        {
-            "#"+collider.gameObject.name,
-            //this.Id,
-            pos.x.ToString(),
-            pos.y.ToString(),
-            pos.z.ToString(),
-            rot.x.ToString(),
-            rot.y.ToString(),
-            rot.z.ToString(),
-            this.Id,
-            this.transform.position.x.ToString(),
-            this.transform.position.y.ToString(),
-            this.transform.position.z.ToString(),
-            this.transform.eulerAngles.x.ToString(),
-            this.transform.eulerAngles.y.ToString(),
-            this.transform.eulerAngles.z.ToString(),
-            vec.x.ToString(),
-            vec.y.ToString(),
-            vec.z.ToString(),
-            vec2.x.ToString(),
-            vec2.y.ToString(),
-            vec2.z.ToString(),
-            headPos.x.ToString(),
-            headPos.y.ToString(),
-            headPos.z.ToString(),
-            Camera.main.transform.position.x.ToString(),
-            Camera.main.transform.position.y.ToString(),
-            Camera.main.transform.position.z.ToString(),
-            triggerTime.ToString(),
-            timeWhenCollisionStarted.ToString(),
-            currentTime.ToString(),
-            "\n"
-        });
+        string str =
+            "#" + collider.gameObject.name + "," +
+            //this.Id+","+
+            pos.x.ToString() + "," +
+            pos.y.ToString() + "," +
+            pos.z.ToString() + "," +
+            rot.x.ToString() + "," +
+            rot.y.ToString() + "," +
+            rot.z.ToString() + "," +
+            this.Id + "," +
+            this.transform.position.x.ToString() + "," +
+            this.transform.position.y.ToString() + "," +
+            this.transform.position.z.ToString() + "," +
+            this.transform.eulerAngles.x.ToString() + "," +
+            this.transform.eulerAngles.y.ToString() + "," +
+            this.transform.eulerAngles.z.ToString() + "," +
+            vec.x.ToString() + "," +
+            vec.y.ToString() + "," +
+            vec.z.ToString() + "," +
+            vec2.x.ToString() + "," +
+            vec2.y.ToString() + "," +
+            vec2.z.ToString() + "," +
+            headPos.x.ToString() + "," +
+            headPos.y.ToString() + "," +
+            headPos.z.ToString() + "," +
+            Camera.main.transform.position.x.ToString() + "," +
+            Camera.main.transform.position.y.ToString() + "," +
+            Camera.main.transform.position.z.ToString() + "," +
+            triggerTime.ToString() + "," +
+            timeWhenCollisionStarted.ToString() + "," +
+            currentTime.ToString() + "," +
+            tTask.getCurrentTask().ToString() + "\n";
+
         if (tTask)
         {
             if(tTask.enabled)
