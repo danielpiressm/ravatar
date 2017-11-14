@@ -98,6 +98,22 @@ public class TrackerClient : MonoBehaviour
         
 	}
 
+    void AdjustTunnelHeight(float height)
+    {
+        GameObject obj = GameObject.Find("task3Object");
+        GameObject son;
+        if (obj)
+        {
+            for (int i = 0; i < obj.transform.childCount; i++)
+            {
+                son = obj.transform.GetChild(i).gameObject;
+                Debug.Log(" son = " + son.name);
+                GameObject grandson = son.transform.Find("bar").gameObject;
+                grandson.transform.position = new Vector3(grandson.transform.position.x, height, grandson.transform.position.z);
+            }
+        }
+    }
+
 	void Update()
 	{
 		if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.PageDown) ||Input.GetKeyDown(KeyCode.Joystick1Button1)) // Mouse tap
@@ -151,7 +167,8 @@ public class TrackerClient : MonoBehaviour
 
 		float userHeight = (trackedHuman.body.Joints[BodyJointType.head].y + 0.1f) - lowerFootY;
 		float scaleRatio = userHeight / avatarHeight;
-      //  bar.transform.position = new Vector3(bar.transform.position.x, userHeight - bardifference, bar.transform.position.z);
+        AdjustTunnelHeight(userHeight - bardifference);//falta o valor de bardifference
+      
 		spineBase.transform.localScale = new Vector3(scaleRatio, scaleRatio, scaleRatio);
 	}
 
