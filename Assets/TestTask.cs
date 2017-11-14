@@ -198,7 +198,7 @@ public class TestTask : MonoBehaviour {
 
         foreach (KeyValuePair<string, ActiveCollision> collPerJoint in collisionsPerJoint)
         {
-            collisionLogStr += "%JointName," + collPerJoint.Key + "," + "CollisionCount," + collPerJoint.Value.collisionCount + ",TimeCollided," + collPerJoint.Value.timeInit + "\n";
+            collisionLogStr += "%JointName," + collPerJoint.Key + "," + "CollisionCount," + collPerJoint.Value.collisionCount + ",TimeCollided," + collPerJoint.Value.timeInit + ",Task,"+ collPerJoint.Value.task.ToString() + "\n";
         }
         System.IO.File.WriteAllText(pathDirectory + "/" + collisionLogfileName + ".csv", collisionLogStr);
 
@@ -379,11 +379,13 @@ public class TestTask : MonoBehaviour {
                         colAux.collisionCount++;
                         colAux.timeInit += (time - activeCollisions[colliderName][i].timeInit);
                         collisionsPerJoint.Add(jointName, colAux);
+                        collisionsPerJoint[jointName].task = currentTask;
                     }
                     else
                     {
                         collisionsPerJoint[jointName].timeInit += (time - activeCollisions[colliderName][i].timeInit);
                         collisionsPerJoint[jointName].collisionCount++;
+                        collisionsPerJoint[jointName].task = currentTask;
                     }
                     collisionCountPerTask[currentTask]++;
 
