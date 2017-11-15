@@ -7,7 +7,7 @@ public enum Tasks { NotStarted, Task1, Task2, Task3, Completed  };
 
 
 
-public enum AvatarType { carlFirstPerson, carlThirdPerson, robotFirstPerson, robotThirdPerson, pointCloudFirstPerson, pointCloudThirdPerson };
+public enum AvatarType { mesh_FirstPerson, mesh_ThirdPerson, abstract_FirstPerson, abstract_ThirdPerson, pointCloud_FirstPerson, pointCloud_ThirdPerson };
 
 public class TestTask : MonoBehaviour {
 
@@ -161,27 +161,14 @@ public class TestTask : MonoBehaviour {
         System.IO.File.AppendAllText(pathDirectory + collisionLogfileName + ".csv", str);
     }
 
-    void serializeBallCollision(string str)
-    {
-        float currentTime = Time.realtimeSinceStartup;
-        logStr += currentTask.ToString() + "," + (currentTime - lastTimeBetweenCollisions) + ","+ currentTime + "\n";
-        //lastTimeBetweenTasks = currentTime;
-        collisionLogStr += str;
-        //Debug.Log("&&" + str);
-    }
-
-    void logBallThrow(float time)
-    {
-        lastTimeBetweenCollisions = time;
-        Debug.Log("BetweenCollisions : " + time + ","+ Time.realtimeSinceStartup);
-    }
+    
 
 
     void InitializeReport()
     {
         collisionLogStr = "Joint,PosX,PosY,PosZ,RotX,RotY,RotZ,ColliderName,PosColliderX,PosColliderY,PosColliderZ,RotColliderX,RotColliderY,RotColliderZ,ErrorX,ErrorY,ErrorZ,Error2X,Error2Y,Error2Z,headPosX,headPosY,headPosZ,cameraPosX,cameraPosY,cameraPosZ,TimeElapsed,TimeStart,TimeFinish,Task\n";
-        
-        logStr = "TriggerNum" + separator + "TimeElapsed" + separator + "CurrentTime\n";
+
+        logStr = "Task1" + separator + "Task2" + separator + "Task3" + ","+ "Total\n";
         pathStr = "Task,Trigger,currentPosX,currentPosY,currentPosZ,pathElapsedX,pathElapsedY,pathElapsedZ,rotX,rotY,rotZ,magnitude\n";
         pathHeaderStr = "Task,Trigger,currentPosX,currentPosY,currentPosZ,pathElapsedX,pathElapsedY,pathElapsedZ,rotX,rotY,rotZ,magnitude,CameraPosX,CameraPosY,CameraPosZ,CameraRotX,CameraRotY,CameraRotZ\n";
 
@@ -191,7 +178,7 @@ public class TestTask : MonoBehaviour {
     void CompleteReport()
     {
         Debug.Log("cheguei aqui");
-        logStr += "TotalTime," + totalTime+"\n";
+        logStr +=  totalTime+"\n";
         
         System.IO.File.WriteAllText( pathDirectory+"/"+logFileName + ".csv" , logStr);
 
@@ -321,7 +308,7 @@ public class TestTask : MonoBehaviour {
     void UpdateReport()
     {
         float currentTime = Time.realtimeSinceStartup;
-        logStr += currentTask.ToString() + "," + (getTaskTime(currentTime)) + "," + Time.realtimeSinceStartup + "\n";
+        logStr += (getTaskTime(currentTime)+",");
         totalTime += getTaskTime(currentTime);
         lastTimeBetweenTasks = currentTime;
         lastTimeBetweenCollisions = currentTime;
