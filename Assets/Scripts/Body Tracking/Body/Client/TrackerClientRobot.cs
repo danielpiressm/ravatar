@@ -6,8 +6,9 @@ using System.Collections.Generic;
 
 public class TrackerClientRobot : MonoBehaviour
 {
-	// Filter parameters
-	private bool isNewFrame;
+    public float rotationTreshold = -0.1f;
+    // Filter parameters
+    private bool isNewFrame;
 	private DateTime frameTime;
 
 	// Human
@@ -149,32 +150,72 @@ public class TrackerClientRobot : MonoBehaviour
 	private void UpdateAvatarBody()
 	{
 		ApplyFilterToJoints();
+        Vector3 headRot = Camera.main.transform.forward; //UnityEngine.VR.InputTracking.GetLocalRotation(UnityEngine.VR.VRNode.CenterEye).eulerAngles;
 
-		// Spine
-		Vector3 spineUp = Utils.GetBoneDirection(spineShoulderJoint.Value, spineBaseJoint.Value);
+        // Spine
+        Vector3 spineUp = Utils.GetBoneDirection(spineShoulderJoint.Value, spineBaseJoint.Value);
 		Vector3 spineRight = Utils.GetBoneDirection(rightShoulderJoint.Value, leftShoulderJoint.Value);
 		Vector3 spineForward = Vector3.Cross(spineRight, spineUp);
 
-		spineBase.position = spineBaseJoint.Value + new Vector3(0.0f, 0.15f, 0.0f);
-		spineBase.rotation = Quaternion.LookRotation(spineForward, spineUp);
+        Vector3 projForward = new Vector3(spineForward.x, 0, spineForward.z);
 
-		// Left Arm
-		leftShoulder.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(leftShoulderJoint.Value, spineShoulderJoint.Value), spineRight);
-		leftElbow.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(leftWristJoint.Value, leftElbowJoint.Value), spineRight);
-        leftArm.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(leftElbowJoint.Value, leftShoulderJoint.Value), spineRight);
+        float dotprod = Vector3.Dot(projForward, headRot);
+        //Debug.Log("DOT " + dotprod);
+        Debug.DrawRay(spineBase.transform.position, spineForward, Color.blue);
 
-		// Left Leg
-		leftHip.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(leftKneeJoint.Value, leftHipJoint.Value), -spineRight);
-		leftKnee.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(leftAnkleJoint.Value, leftKneeJoint.Value), -spineRight);
+        if (dotprod < rotationTreshold)
+        {
+            Debug.Log("outside");
+            spineRight = Utils.GetBoneDirection(leftShoulderJoint.Value, rightShoulderJoint.Value);
+            spineForward = Vector3.Cross(spineRight, spineUp);
 
-		// Right Arm
-		rightShoulder.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(rightShoulderJoint.Value, spineShoulderJoint.Value), spineRight);
-		rightElbow.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(rightWristJoint.Value, rightElbowJoint.Value), spineRight);
-		rightArm.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(rightElbowJoint.Value, rightShoulderJoint.Value), spineRight);
 
-		// Right Leg
-		rightHip.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(rightKneeJoint.Value, rightHipJoint.Value), -spineRight);
-		rightKnee.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(rightAnkleJoint.Value, rightKneeJoint.Value), -spineRight);
+            spineBase.position = spineBaseJoint.Value + new Vector3(0.0f, 0.15f, 0.0f);
+            spineBase.rotation = Quaternion.LookRotation(spineForward, spineUp);
+
+            // Left Arm
+            leftShoulder.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(rightShoulderJoint.Value, spineShoulderJoint.Value), spineRight);
+            leftElbow.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(rightWristJoint.Value, leftElbowJoint.Value), spineRight);
+            leftArm.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(rightElbowJoint.Value, rightShoulderJoint.Value), spineRight);
+
+            // Left Leg
+            leftHip.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(rightKneeJoint.Value, rightHipJoint.Value), -spineRight);
+            leftKnee.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(rightAnkleJoint.Value, rightKneeJoint.Value), -spineRight);
+
+            // Right Arm
+            rightShoulder.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(leftShoulderJoint.Value, spineShoulderJoint.Value), spineRight);
+            rightElbow.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(leftWristJoint.Value, leftElbowJoint.Value), spineRight);
+            rightArm.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(leftElbowJoint.Value, leftShoulderJoint.Value), spineRight);
+
+            // Right Leg
+            rightHip.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(leftKneeJoint.Value, leftHipJoint.Value), -spineRight);
+            rightKnee.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(leftAnkleJoint.Value, leftKneeJoint.Value), -spineRight);
+        }
+        else
+        {
+            spineBase.position = spineBaseJoint.Value + new Vector3(0.0f, 0.15f, 0.0f);
+            spineBase.rotation = Quaternion.LookRotation(spineForward, spineUp);
+
+            // Left Arm
+            leftShoulder.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(leftShoulderJoint.Value, spineShoulderJoint.Value), spineRight);
+            leftElbow.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(leftWristJoint.Value, leftElbowJoint.Value), spineRight);
+            leftArm.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(leftElbowJoint.Value, leftShoulderJoint.Value), spineRight);
+
+            // Left Leg
+            leftHip.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(leftKneeJoint.Value, leftHipJoint.Value), -spineRight);
+            leftKnee.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(leftAnkleJoint.Value, leftKneeJoint.Value), -spineRight);
+
+            // Right Arm
+            rightShoulder.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(rightShoulderJoint.Value, spineShoulderJoint.Value), spineRight);
+            rightElbow.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(rightWristJoint.Value, rightElbowJoint.Value), spineRight);
+            rightArm.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(rightElbowJoint.Value, rightShoulderJoint.Value), spineRight);
+
+            // Right Leg
+            rightHip.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(rightKneeJoint.Value, rightHipJoint.Value), -spineRight);
+            rightKnee.rotation = Utils.GetQuaternionFromUpRight(Utils.GetBoneDirection(rightAnkleJoint.Value, rightKneeJoint.Value), -spineRight);
+        }
+
+        
     }
 
     /// <summary>

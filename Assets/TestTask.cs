@@ -107,6 +107,7 @@ public class TestTask : MonoBehaviour {
         listObjectsInEachTask[Tasks.Completed.ToString()] = objectTask4;
 
         pathDirectory = Directory.GetCurrentDirectory() + "/user" + i + "_"+avatarType.ToString() + "/";
+        System.IO.Directory.CreateDirectory(pathDirectory + "fullbodyLog/");
         activeCollisions = new Dictionary<string, List<ActiveCollision>>();
         finishedCollisions = new List<FinishedCollision>();
         finishedCollisionsAux = new Dictionary<string, FinishedCollision>();
