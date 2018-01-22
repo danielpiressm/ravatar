@@ -95,7 +95,6 @@ public class TrackerClient : MonoBehaviour
 
         lastCameraForward = Camera.main.transform.forward;
         lastTrackerForward = spineBase.transform.forward;
-        
 	}
 
     void AdjustTunnelHeight(float height)

@@ -9,6 +9,7 @@ public class TrackerProperties : MonoBehaviour {
     public int listenPort = 55555;
     public int trackerPort = 53804;
 
+
     public string configFilename = "configSettings.txt";
 
     private TrackerProperties()

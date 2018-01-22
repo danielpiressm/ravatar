@@ -22,13 +22,11 @@ public class HeadCameraController : MonoBehaviour
 
     void Start()
     {
-        TrackerClientSimpleRobot tcsr = null;
-        if (character != null)
-        tcsr = character.GetComponent<TrackerClientSimpleRobot>();
+       
 
         GameObject go = new GameObject("pivot1stAux");
         pivot1stAux = go.transform;
-        pivot1stAux.parent = tcsr == null? headTransform : tcsr.getHead();
+        pivot1stAux.parent =headTransform ;
         pivot1stAux.localPosition = Vector3.zero;
         pivot1stAux.localScale = Vector3.one;
 
@@ -40,7 +38,7 @@ public class HeadCameraController : MonoBehaviour
 
         go = new GameObject("pivot3rdAux");
         pivot3rdAux = go.transform;
-        pivot3rdAux.parent = tcsr == null ? headTransform : tcsr.getHead();
+        pivot3rdAux.parent =  headTransform;
         pivot3rdAux.localPosition = new Vector3(0, 2.54f, 0); // PARAMETRIZAR
         pivot3rdAux.localScale = Vector3.one;
 
