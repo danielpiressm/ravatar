@@ -80,11 +80,12 @@ public class PointCloudDepth : MonoBehaviour
                     GameObject a = new GameObject("cloud" + i);
                     MeshFilter mf = a.AddComponent<MeshFilter>();
                     MeshRenderer mr = a.AddComponent<MeshRenderer>();
+
                     mr.material = _mat;
                     mf.mesh = new Mesh();
                     mf.mesh.vertices = points.ToArray();
                     mf.mesh.SetIndices(ind.ToArray(), MeshTopology.Points, 0);
-                    mf.mesh.bounds = new Bounds(new Vector3(0, 0, 4.5f), new Vector3(5, 5, 5));
+                    mf.mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 2000);
                     a.transform.parent = this.gameObject.transform;
                     a.transform.localPosition = Vector3.zero;
                     a.transform.localRotation = Quaternion.identity;
@@ -159,6 +160,9 @@ public class PointCloudDepth : MonoBehaviour
         for (int i = 0; i < renderers.Length; i++)
         {
             MeshRenderer mr = renderers[i];
+            MeshFilter mf = renderers[i].gameObject.GetComponent<MeshFilter>();
+            mf.mesh.bounds = new Bounds(Camera.main.transform.position + Camera.main.transform.forward * 0.5f, Vector3.one * 2000);
+
             mr.material.SetInt("_TexScale", _texScale);
             mr.material.SetTexture("_ColorTex", _colorTex);
             mr.material.SetTexture("_DepthTex", _depthTex);

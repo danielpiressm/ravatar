@@ -21,7 +21,7 @@ public class Tracker : MonoBehaviour
 		_clouds = new Dictionary<string, PointCloudDepth> ();
         _cloudGameObjects = new Dictionary<string, GameObject>();
         _loadConfig ();
-
+        Camera.main.useOcclusionCulling = false;
         UdpClient udp = new UdpClient();
         string message = AvatarMessage.createRequestMessage(1, TrackerProperties.Instance.listenPort);
         byte[] data = Encoding.UTF8.GetBytes(message);
