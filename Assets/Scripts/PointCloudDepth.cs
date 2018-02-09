@@ -26,7 +26,7 @@ public class PointCloudDepth : MonoBehaviour
         _texScale = 1;
         _objs = null;
 
-        
+        _headSize = 0.20f;
         _mat = Resources.Load("Materials/cloudmatDepth") as Material;
 
         _decoder = new RVLDecoder();
