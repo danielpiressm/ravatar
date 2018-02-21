@@ -63,7 +63,7 @@ public class BodyHandler : MonoBehaviour {
     void Start () {
         dictionaryBody = new Dictionary<string, BodyPart>();
 
-        tTask = this.GetComponent<TestTask>();
+        tTask = GameObject.Find("triggerObjects").GetComponent<TestTask>();
         header = "Task,PosX,PosY,PosZ,RotX,RotY,RotZ,HeadPosX,HeadPosY,HeadPosZ,HeadRotX,HeadRotY,HeadRotZ,Time,Task\n";
 
         jointSpheresGO = GameObject.FindGameObjectsWithTag("jointSphere");
