@@ -6,7 +6,8 @@ using System.Runtime.InteropServices;
 
 
 
-public class PointCloudSimple : MonoBehaviour {
+public class PointCloudSimple : MonoBehaviour
+{
     Mesh[] highres_cloud;
     Mesh[] lowres_cloud;
     int highres_nclouds = 0;
@@ -26,6 +27,8 @@ public class PointCloudSimple : MonoBehaviour {
     int h;
     Vector3[] posBucket;
     Color[] colBucket;
+    byte[] buffer;
+
 
     void readFileWithColor(string f)
     {
@@ -36,7 +39,7 @@ public class PointCloudSimple : MonoBehaviour {
 
         string line = "";
         int i = 0;
-
+        Mesh m = new Mesh();
         while (!sr.EndOfStream)
         {
             line = sr.ReadLine();
@@ -65,7 +68,7 @@ public class PointCloudSimple : MonoBehaviour {
             pts.Add(1);
         }
 
-        setPoints(pts.ToArray(), 0, ++id,i);
+        setPoints(pts.ToArray(), 0, ++id, i);
         setToView();
     }
 
@@ -80,9 +83,10 @@ public class PointCloudSimple : MonoBehaviour {
 
     }
     int countPack = 0;
-    public void setPoints(byte[] receivedBytes, int step, uint newid,int size){
+    public void setPoints(byte[] receivedBytes, int step, uint newid, int size)
+    {
 
-      
+
 
         pointsH = new List<Vector3>();
         colorsH = new List<Color>();
@@ -91,8 +95,9 @@ public class PointCloudSimple : MonoBehaviour {
         indL = new List<int>();
         colorsL = new List<Color>();
         UnionArray rec = new UnionArray { Bytes = receivedBytes };
-     
-        if (newid > id) {
+
+        if (newid > id)
+        {
             id = newid;
 
             for (int a = 0; a < 4; a++)
@@ -108,7 +113,7 @@ public class PointCloudSimple : MonoBehaviour {
             pointCount = 0;
             countPack = 0;
         }
-        else if(newid == id)
+        else if (newid == id)
         {
             countPack++;
             pointsL.AddRange(lowres_cloud[lowres_nclouds].vertices);
@@ -122,7 +127,8 @@ public class PointCloudSimple : MonoBehaviour {
             l = pointsL.Count;
             h = pointsH.Count;
 
-        }else
+        }
+        else
         {
             Debug.Log("Old packet" + newid);
             return;
@@ -206,15 +212,17 @@ public class PointCloudSimple : MonoBehaviour {
         lowres_cloud[lowres_nclouds].SetIndices(indL.ToArray(), MeshTopology.Points, 0);
     }
 
-	public void setToView(){
-		MeshFilter[] filters = GetComponentsInChildren<MeshFilter> ();
+    public void setToView()
+    {
+        MeshFilter[] filters = GetComponentsInChildren<MeshFilter>();
         // Note that there are 8 MeshFilter -> [HR HR HR HR LR LR LR LR]
-        int lr =lowres_nclouds + 4;  // Therefore, the low resolution clouds start at index 4
-        for (int i = 0; i < filters.Length; i++) {
+        int lr = lowres_nclouds + 4;  // Therefore, the low resolution clouds start at index 4
+        for (int i = 0; i < filters.Length; i++)
+        {
             MeshFilter mf = filters[i];
             if (i <= highres_nclouds)
             {
-				mf.mesh = highres_cloud[i];
+                mf.mesh = highres_cloud[i];
             }
             else if (i <= lr && i >= 4)
             {
@@ -222,20 +230,23 @@ public class PointCloudSimple : MonoBehaviour {
             }
             else
             {
-				mf.mesh.Clear();
+                mf.mesh.Clear();
             }
-		}
+        }
     }
 
-	public void hideFromView(){
-		MeshFilter[] filters = GetComponentsInChildren<MeshFilter> ();
-		foreach (MeshFilter mf in filters) {
-			mf.mesh.Clear();
-		}	
-	}
+    public void hideFromView()
+    {
+        MeshFilter[] filters = GetComponentsInChildren<MeshFilter>();
+        foreach (MeshFilter mf in filters)
+        {
+            mf.mesh.Clear();
+        }
+    }
 
     // Use this for initialization
-    void Start() {
+    void Start()
+    {
         // Material for the high resolution points
         Material mat = Resources.Load("Materials/cloudmat") as Material;
         // Material for the low resolution points
@@ -245,7 +256,8 @@ public class PointCloudSimple : MonoBehaviour {
         mat.SetFloat("_Size", 0.015f);  // HR
         other.SetFloat("_Size", 0.025f); // LR
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++)
+        {
             GameObject a = new GameObject("highres_cloud" + i);
             MeshFilter mf = a.AddComponent<MeshFilter>();
             MeshRenderer mr = a.AddComponent<MeshRenderer>();
@@ -274,7 +286,8 @@ public class PointCloudSimple : MonoBehaviour {
         colorsL = new List<Color>();
         highres_cloud = new Mesh[4];
         lowres_cloud = new Mesh[4];
-        for (int a = 0; a < 4; a++) {
+        for (int a = 0; a < 4; a++)
+        {
             lowres_cloud[a] = new Mesh();
             highres_cloud[a] = new Mesh();
         }
@@ -286,6 +299,7 @@ public class PointCloudSimple : MonoBehaviour {
             colBucket[i] = new Color();
         }
 
+        buffer = new byte[4]; // Buffer for the x, y and z floats
         pointCount = 0;
         l = 0;
         h = 0;

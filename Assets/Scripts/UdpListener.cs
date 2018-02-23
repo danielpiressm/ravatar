@@ -17,7 +17,8 @@ public static class MessageSeparators
 }
 
 
-public class UdpListener : MonoBehaviour {
+public class UdpListener : MonoBehaviour
+{
 
     private UdpClient _udpClient = null;
     private IPEndPoint _anyIP;
@@ -41,16 +42,16 @@ public class UdpListener : MonoBehaviour {
         }
 
         _stringsToParse = new List<byte[]>();
-        
-		_anyIP = new IPEndPoint(IPAddress.Any, TrackerProperties.Instance.listenPort);
-        
+
+        _anyIP = new IPEndPoint(IPAddress.Any, TrackerProperties.Instance.listenPort);
+
         _udpClient = new UdpClient(_anyIP);
 
         _udpClient.BeginReceive(new AsyncCallback(this.ReceiveCallback), null);
 
-		Debug.Log("[UDPListener] Receiving in port: " + TrackerProperties.Instance.listenPort);
+        Debug.Log("[UDPListener] Receiving in port: " + TrackerProperties.Instance.listenPort);
     }
-    
+
     public void ReceiveCallback(IAsyncResult ar)
     {
         Byte[] receiveBytes = _udpClient.EndReceive(ar, ref _anyIP);
@@ -60,15 +61,23 @@ public class UdpListener : MonoBehaviour {
 
     void Update()
     {
-  
+
         while (_stringsToParse.Count > 0)
         {
             try
             {
                 byte[] toProcess = _stringsToParse.First();
-                if(toProcess != null)
+                if (toProcess != null)
                 {
-                  if (Convert.ToChar(toProcess[0]) == 'A')
+                    // TMA: THe first char distinguishes between a BodyMessage and a CloudMessage
+                    if (Convert.ToChar(toProcess[0]) == 'C')
+                    {
+                        string stringToParse = Encoding.ASCII.GetString(toProcess);
+                        string[] splitmsg = stringToParse.Split(MessageSeparators.L0);
+                        message.set(splitmsg[1], toProcess, splitmsg[0].Length);
+                        gameObject.GetComponent<Tracker>().setNewCloud(message);
+                    }
+                    else if (Convert.ToChar(toProcess[0]) == 'A')
                     {
                         Debug.Log("Got Calibration Message! ");
                         string stringToParse = Encoding.ASCII.GetString(toProcess);
