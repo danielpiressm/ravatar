@@ -57,6 +57,8 @@ public class Tracker : MonoBehaviour
         }
     }
 
+
+
     //FOR TCP
     internal void setNewCloud(string KinectID, byte[] data, int size, uint id)
     {

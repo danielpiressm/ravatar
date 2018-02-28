@@ -22,6 +22,8 @@ public class BodyPart
 {
     public Transform transform;
     public string strToPersist;
+    public int countStrings = 0;
+   
 
     public BodyPart(Transform transform,string header)
     {
@@ -52,13 +54,13 @@ public class BodyHandler : MonoBehaviour {
 
     public bool abstractAvatar;
     public bool logBody;
-
+    public float timeToNextWrite = 0;
     string header = "";
 
     public TestTask tTask;
 
     int countStrings = 0;
-
+    int countFingers = 0;
     // Use this for initialization
     void Start () {
         dictionaryBody = new Dictionary<string, BodyPart>();
@@ -85,6 +87,8 @@ public class BodyHandler : MonoBehaviour {
             bodyGO.GetComponent<BoxCollider>().isTrigger = true;
             dictionaryBody.Add(bodyPartName, new BodyPart(bodyGO.transform, header));
         }
+
+
         
     }
 
@@ -115,7 +119,7 @@ public class BodyHandler : MonoBehaviour {
 
         HeadCameraController headControl = Camera.main.transform.parent.gameObject.GetComponent<HeadCameraController>();
 
-
+        timeToNextWrite = 0;
         foreach (KeyValuePair<string, BodyPart> b in dictionaryBody)
         {
             if (abstractAvatar)
@@ -137,7 +141,7 @@ public class BodyHandler : MonoBehaviour {
                 go.GetComponent<MeshRenderer>().enabled = false;
 
             }
-            float timeToNextWrite = 0;
+            
             int countBodyParts = dictionaryBody.Count;
 
 
@@ -167,21 +171,19 @@ public class BodyHandler : MonoBehaviour {
                 b.Value.appendToString(str);
 
                 float timeToWrite = 0.0f;
-                countStrings++;
+                b.Value.countStrings++;
                 countBodyParts--;
-                if (countStrings > 500)
+                if (b.Value.countStrings > 100)
                 {
                     //writeToFile
                     //System.IO.File.AppendAllText(tTask.getPathDirectory() + "/" + b.Key +".csv" , b.Value.strToPersist);
                     StartCoroutine(printToFile(b.Value.strToPersist, b.Key, timeToNextWrite));
                     b.Value.clearString();
-                    timeToWrite += 0.5f;
+                    timeToNextWrite += 0.5f;
+                    b.Value.countStrings = 0;
                     //countStrings = 0;
                 }
-                if(countBodyParts <= 0)
-                {
-                    countStrings = 0;
-                }
+                
             }
 
         }
