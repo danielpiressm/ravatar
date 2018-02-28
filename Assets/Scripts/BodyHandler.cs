@@ -115,7 +115,6 @@ public class BodyHandler : MonoBehaviour {
 
         HeadCameraController headControl = Camera.main.transform.parent.gameObject.GetComponent<HeadCameraController>();
 
-        
 
         foreach (KeyValuePair<string, BodyPart> b in dictionaryBody)
         {
@@ -138,8 +137,10 @@ public class BodyHandler : MonoBehaviour {
                 go.GetComponent<MeshRenderer>().enabled = false;
 
             }
+            float timeToNextWrite = 0;
+            int countBodyParts = dictionaryBody.Count;
 
-            
+
             if (logBody && !isAFinger(b.Value.transform.gameObject))
             {
                 string str =
@@ -167,14 +168,19 @@ public class BodyHandler : MonoBehaviour {
 
                 float timeToWrite = 0.0f;
                 countStrings++;
-                float x = 0;
+                countBodyParts--;
                 if (countStrings > 500)
                 {
                     //writeToFile
-                    System.IO.File.AppendAllText(tTask.getPathDirectory() + "/" + b.Key +".csv" , b.Value.strToPersist);
-                    StartCoroutine(printToFile(b.Key, b.Value.strToPersist, x));
+                    //System.IO.File.AppendAllText(tTask.getPathDirectory() + "/" + b.Key +".csv" , b.Value.strToPersist);
+                    StartCoroutine(printToFile(b.Value.strToPersist, b.Key, timeToNextWrite));
                     b.Value.clearString();
                     timeToWrite += 0.5f;
+                    //countStrings = 0;
+                }
+                if(countBodyParts <= 0)
+                {
+                    countStrings = 0;
                 }
             }
 
@@ -185,7 +191,7 @@ public class BodyHandler : MonoBehaviour {
     private IEnumerator printToFile(string str, string path, float time)
     {
         yield return new WaitForSeconds(time);
-        System.IO.File.AppendAllText(tTask.getPathDirectory() + "/fullbodyLog/" + path, str);
+        System.IO.File.AppendAllText(tTask.getPathDirectory() + "/fullbodyLog/" + path + ".csv", str);
         yield return null;
     }
 }

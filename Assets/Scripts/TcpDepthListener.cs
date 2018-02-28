@@ -245,7 +245,7 @@ public class TcpDepthListener : MonoBehaviour
             
             if (k.dirty)
             {
-                gameObject.GetComponent<Tracker>().setNewDepthCloud(k.name, k.colorData,k.depthData, k.lastID,k.compressed,k.sizec,k.scale);
+              //  gameObject.GetComponent<Tracker>().setNewDepthCloud(k.name, k.colorData,k.depthData, k.lastID,k.compressed,k.sizec,k.scale);
                 k.dirty = false;
             }
             
