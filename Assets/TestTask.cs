@@ -385,7 +385,7 @@ public class TestTask : MonoBehaviour {
         if (triggerId == "walkTrigger1")
         {
             startTime = Time.realtimeSinceStartup;
-            Debug.Log("##### starting counter #####");
+            Debug.Log("##### starting counter for Task "+ currentTask+ " #####");
         }
             
         //Start the counter
