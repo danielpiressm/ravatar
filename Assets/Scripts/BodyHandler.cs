@@ -23,12 +23,19 @@ public class BodyPart
     public Transform transform;
     public string strToPersist;
     public int countStrings = 0;
+    public bool isAFinger = false;
    
 
     public BodyPart(Transform transform,string header)
     {
         this.transform = transform;
         strToPersist += header;
+    }
+    public BodyPart(Transform transform, string header,bool isAFinger)
+    {
+        this.transform = transform;
+        strToPersist += header;
+        this.isAFinger = isAFinger;
     }
 
     public void clearString()
@@ -75,6 +82,7 @@ public class BodyHandler : MonoBehaviour {
         {
             int index = bodyGO.name.IndexOf("Cube");
             string bodyPartName = "";
+            bool isAFinger = false;
             if (index > 0)
                 bodyPartName = bodyGO.name.Substring(0, index);
             else
@@ -84,15 +92,19 @@ public class BodyHandler : MonoBehaviour {
             {
                 head = bodyGO.transform;
             }
+            if(IAmAFinger(bodyGO))
+            {
+                isAFinger = true;
+            }
             bodyGO.GetComponent<BoxCollider>().isTrigger = true;
-            dictionaryBody.Add(bodyPartName, new BodyPart(bodyGO.transform, header));
+            dictionaryBody.Add(bodyPartName, new BodyPart(bodyGO.transform, header,isAFinger));
         }
 
 
         
     }
 
-    bool isAFinger(GameObject go)
+    bool IAmAFinger(GameObject go)
     {
         if(go.name.Contains("Index") || go.name.Contains("Thumb") || go.name.Contains("Ring") || go.name.Contains("Pinky") || go.name.Contains("Middle"))
         {
@@ -120,6 +132,7 @@ public class BodyHandler : MonoBehaviour {
         HeadCameraController headControl = Camera.main.transform.parent.gameObject.GetComponent<HeadCameraController>();
 
         timeToNextWrite = 0;
+        int countFor = 0;
         foreach (KeyValuePair<string, BodyPart> b in dictionaryBody)
         {
             if (abstractAvatar)
@@ -145,9 +158,11 @@ public class BodyHandler : MonoBehaviour {
             int countBodyParts = dictionaryBody.Count;
 
 
-            if (logBody && !isAFinger(b.Value.transform.gameObject))
+            if (logBody &&  !b.Value.isAFinger)
             {
-                string str =
+                countFor++;
+
+                string str = 
                      tTask.getCurrentTask() + "," +
                      b.Value.transform.position.x.ToString() + "," +
                      b.Value.transform.position.y.ToString() + "," +
@@ -161,25 +176,20 @@ public class BodyHandler : MonoBehaviour {
                      head.transform.eulerAngles.x.ToString() + "," +
                      head.transform.eulerAngles.y.ToString() + "," +
                      head.transform.eulerAngles.z.ToString() + "," +
-                     Time.realtimeSinceStartup.ToString() + "," +
-                     tTask.getCurrentTask()+
+                     Time.realtimeSinceStartup.ToString() +
                      "\n";
-                
-
-
 
                 b.Value.appendToString(str);
-
-                float timeToWrite = 0.0f;
                 b.Value.countStrings++;
+
                 countBodyParts--;
-                if (b.Value.countStrings > 100)
+                if (b.Value.countStrings > 700)
                 {
                     //writeToFile
                     //System.IO.File.AppendAllText(tTask.getPathDirectory() + "/" + b.Key +".csv" , b.Value.strToPersist);
                     StartCoroutine(printToFile(b.Value.strToPersist, b.Key, timeToNextWrite));
                     b.Value.clearString();
-                    timeToNextWrite += 0.5f;
+                    timeToNextWrite += 1.5f;
                     b.Value.countStrings = 0;
                     //countStrings = 0;
                 }
@@ -193,7 +203,7 @@ public class BodyHandler : MonoBehaviour {
     private IEnumerator printToFile(string str, string path, float time)
     {
         yield return new WaitForSeconds(time);
-        System.IO.File.AppendAllText(tTask.getPathDirectory() + "/fullbodyLog/" + path + ".csv", str);
+        //System.IO.File.AppendAllText(tTask.getPathDirectory() + "/fullbodyLog/" + path + ".csv", str);
         yield return null;
     }
 }
