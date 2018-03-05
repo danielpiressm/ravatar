@@ -58,10 +58,13 @@ public class BodyHandler : MonoBehaviour {
     GameObject[] bodyPartsGO;
     GameObject[] jointSpheresGO;
 
-
+    public int numberOfStringsPerWrite = 500;
+    public float timeBetweenWrites = 0.5f;
     public bool abstractAvatar;
     public bool logBody;
-    public float timeToNextWrite = 0;
+
+
+    float timeToNextWrite = 0;
     string header = "";
 
     public TestTask tTask;
@@ -69,10 +72,17 @@ public class BodyHandler : MonoBehaviour {
     int countStrings = 0;
     int countFingers = 0;
     // Use this for initialization
+    private void Awake()
+    {
+        tTask = GameObject.Find("triggerObjects").GetComponent<TestTask>();
+       // tTask.avatarType = avatarType;
+    }
+
     void Start () {
         dictionaryBody = new Dictionary<string, BodyPart>();
+        
 
-        tTask = GameObject.Find("triggerObjects").GetComponent<TestTask>();
+        
         header = "Task,PosX,PosY,PosZ,RotX,RotY,RotZ,HeadPosX,HeadPosY,HeadPosZ,HeadRotX,HeadRotY,HeadRotZ,Time,Task\n";
 
         jointSpheresGO = GameObject.FindGameObjectsWithTag("jointSphere");
@@ -97,12 +107,18 @@ public class BodyHandler : MonoBehaviour {
                 isAFinger = true;
             }
             bodyGO.GetComponent<BoxCollider>().isTrigger = true;
-            dictionaryBody.Add(bodyPartName, new BodyPart(bodyGO.transform, header,isAFinger));
+            try { dictionaryBody.Add(bodyPartName, new BodyPart(bodyGO.transform, header, isAFinger));
+            }catch(Exception ex)
+            {
+                Debug.Log("Trying to add = " + bodyGO.name);
+            }
         }
 
 
         
     }
+
+    
 
     bool IAmAFinger(GameObject go)
     {
@@ -183,13 +199,13 @@ public class BodyHandler : MonoBehaviour {
                 b.Value.countStrings++;
 
                 countBodyParts--;
-                if (b.Value.countStrings > 700)
+                if (b.Value.countStrings > numberOfStringsPerWrite)
                 {
                     //writeToFile
                     //System.IO.File.AppendAllText(tTask.getPathDirectory() + "/" + b.Key +".csv" , b.Value.strToPersist);
                     StartCoroutine(printToFile(b.Value.strToPersist, b.Key, timeToNextWrite));
                     b.Value.clearString();
-                    timeToNextWrite += 1.5f;
+                    timeToNextWrite += timeBetweenWrites;
                     b.Value.countStrings = 0;
                     //countStrings = 0;
                 }
@@ -203,7 +219,27 @@ public class BodyHandler : MonoBehaviour {
     private IEnumerator printToFile(string str, string path, float time)
     {
         yield return new WaitForSeconds(time);
-        //System.IO.File.AppendAllText(tTask.getPathDirectory() + "/fullbodyLog/" + path + ".csv", str);
+        System.IO.File.AppendAllText(tTask.getPathDirectory() + "/fullbodyLog/" + path + ".csv", str);
         yield return null;
     }
+
+    public void OnDisable()
+    {
+        if (logBody)
+        {
+            foreach (KeyValuePair<string, BodyPart> b in dictionaryBody)
+            {
+                if (!b.Value.isAFinger)
+                {
+                    string path = b.Key;
+                    string str = b.Value.strToPersist;
+                    System.IO.File.AppendAllText(tTask.getPathDirectory() + "/fullbodyLog/" + path + ".csv", str);
+
+                }
+            }
+            Debug.Log("!!!PRiNtEi tUdO!!!");
+            
+        }
+
+    } 
 }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.IO;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public enum Tasks { NotStarted, Task1, Task2, Task3, Completed  };
 
@@ -77,6 +78,61 @@ public class TestTask : MonoBehaviour {
     }
 
 
+    public AvatarType determineAvatar()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+    
+        AvatarType aType = AvatarType.abstract_FirstPerson;
+        bool firstPerson = false;
+
+        if(sceneName.Contains("First") || sceneName.Contains("first"))
+        {
+            firstPerson = true;
+        }
+        else
+        {
+            firstPerson = false;
+        }
+
+        if(sceneName.Contains("boxMan") || sceneName.Contains("blue"))
+        {
+            if(firstPerson)
+            {
+                aType = AvatarType.abstract_FirstPerson;
+            }
+            else
+            {
+                aType = AvatarType.abstract_ThirdPerson;
+            }
+        }
+        else if(sceneName.Contains("carl") || sceneName.Contains("Carl"))
+        {
+            if (firstPerson)
+            {
+                aType = AvatarType.mesh_FirstPerson;
+            }
+            else
+            {
+                aType = AvatarType.mesh_ThirdPerson;
+            }
+        }
+        else if (sceneName.Contains("ravatar"))
+        {
+            if (firstPerson)
+            {
+                aType = AvatarType.pointCloud_FirstPerson;
+            }
+            else
+            {
+                aType = AvatarType.pointCloud_ThirdPerson;
+            }
+        }
+
+        return aType;
+
+    }
+
+
     // Use this for initialization
     void Start () {
         //currentTask = Tasks.Task1;
@@ -87,6 +143,9 @@ public class TestTask : MonoBehaviour {
         lastPos = _trackedObj.transform.position;
         InitializeReport();
         separator = ",";
+
+
+        avatarType = determineAvatar();
         
         int i = 1;
         
