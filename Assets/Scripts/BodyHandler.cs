@@ -80,7 +80,7 @@ public class BodyHandler : MonoBehaviour {
 
     void Start () {
         dictionaryBody = new Dictionary<string, BodyPart>();
-        
+        logBody = true;
 
         
         header = "Task,PosX,PosY,PosZ,RotX,RotY,RotZ,HeadPosX,HeadPosY,HeadPosZ,HeadRotX,HeadRotY,HeadRotZ,Time,Task\n";

@@ -53,5 +53,5 @@ public class PointSmoothing
 			initPoint = currPoint;
 			targetPoint.Value = newPoint;
 		}
-	}
+    }
 }
