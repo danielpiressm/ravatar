@@ -58,6 +58,7 @@ public class BodyHandler : MonoBehaviour {
     GameObject[] bodyPartsGO;
     GameObject[] jointSpheresGO;
 
+    public Material boneMaterial;
     public int numberOfStringsPerWrite = 500;
     public float timeBetweenWrites = 0.5f;
     public bool abstractAvatar;
@@ -112,6 +113,8 @@ public class BodyHandler : MonoBehaviour {
             {
                 Debug.Log("Trying to add = " + bodyGO.name);
             }
+
+            bodyGO.GetComponent<MeshRenderer>().material = new Material(boneMaterial);
         }
 
 
@@ -174,7 +177,7 @@ public class BodyHandler : MonoBehaviour {
             int countBodyParts = dictionaryBody.Count;
 
 
-            if (logBody &&  !b.Value.isAFinger)
+            if (logBody &&  !b.Value.isAFinger && tTask.getCurrentTask()!= Tasks.NotStarted.ToString()) 
             {
                 countFor++;
 

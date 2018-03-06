@@ -14,6 +14,8 @@ public class TestTask : MonoBehaviour {
 
     public AvatarType avatarType;
 
+    public bool started = false;
+
     public string collisionLogfileName = "collisionLog";
     public string logFileName = "log";
     public string pathLogFileName = "logPath";
@@ -179,6 +181,10 @@ public class TestTask : MonoBehaviour {
             timeCollidingWithStuffPerTask.Add((Tasks)j, 0);
             collisionCountPerTask.Add((Tasks)j, 0);
         }
+
+        GameObject.Find("triggerObject1").GetComponent<BoxCollider>().enabled = false;
+        GameObject.Find("triggerObject2").GetComponent<BoxCollider>().enabled = false;
+
     }
 
     public AvatarType getAvatarType()
@@ -203,6 +209,20 @@ public class TestTask : MonoBehaviour {
             UpdatePathReport();
         }
         
+        if(Input.GetKeyDown(KeyCode.S))
+        {
+            GameObject.Find("triggerObject1").GetComponent<BoxCollider>().enabled = true;
+            GameObject.Find("triggerObject2").GetComponent<BoxCollider>().enabled = true;
+        }
+        
+    }
+
+    public bool taskStarted()
+    {
+        if (currentTask != Tasks.NotStarted)
+            return true;
+        else
+            return false;
     }
 
     float getTaskTime(float time)
