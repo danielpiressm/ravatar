@@ -56,6 +56,7 @@ public class TestTask : MonoBehaviour {
     
     Dictionary<string, List<ActiveCollision>> activeCollisions;
     List<FinishedCollision> finishedCollisions;
+    List<FinishedCollision> finishedCollisionsHistory;
     Dictionary<string, FinishedCollision> finishedCollisionsAux;
 
     FinishedCollision finishedAux;
@@ -174,6 +175,8 @@ public class TestTask : MonoBehaviour {
         finishedCollisions = new List<FinishedCollision>();
         finishedCollisionsAux = new Dictionary<string, FinishedCollision>();
         collisionsPerJoint = new Dictionary<string, ActiveCollision>();
+        finishedCollisionsHistory = new List<FinishedCollision>();
+
 
         timeCollidingWithStuffPerTask = new Dictionary<Tasks, float>();
         collisionCountPerTask = new Dictionary<Tasks, float>();
@@ -272,7 +275,7 @@ public class TestTask : MonoBehaviour {
         for (int i = 0; i < timeCollidingWithStuffPerTask.Count; i++)
         {
             objectsCollidedPerTask = finishedCollisionsPerTask[(Tasks)i].Count;
-            collisionLogStr += "@Task," + (Tasks)i +  ",CollisionCount," + collisionCountPerTask[(Tasks)i] + ",NumberObjectsCollided,"+ objectsCollidedPerTask + ",TotalTimeCollided(s)," + timeCollidingWithStuffPerTask[(Tasks)i] + "\n";
+            collisionLogStr += "@Task," + (Tasks)i +  ",CollisionCount," + collisionCountPerTask[(Tasks)i] + ",NumberObjectsCollided,"+ objectsCollidedPerTask + ",TotalTimeCollided(s)," + timeCollidingWithStuffPerTask[(Tasks)i] + ",CollisionNroHistory,"+ finishedCollisionsHistory.Count+"\n";
         }
 
 
@@ -539,7 +542,7 @@ public class TestTask : MonoBehaviour {
                         if(!foundInGeneralList)
                             finishedCollisions.Add(finishedCollisionsAux[colliderName]);
                         //finishedCollisionsPerTask[currentTask].Add(finishedCollisionsAux[colliderName]);
-
+                        finishedCollisionsHistory.Add(finishedCollisionsAux[colliderName]);
                         timeCollidingWithStuff += (finishedCollisionsAux[colliderName].finishTime - finishedCollisionsAux[colliderName].startTime);
                         timeCollidingWithStuffPerTask[currentTask] += (finishedCollisionsAux[colliderName].finishTime - finishedCollisionsAux[colliderName].startTime);
 
