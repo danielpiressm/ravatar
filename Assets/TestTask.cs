@@ -26,7 +26,7 @@ public class TestTask : MonoBehaviour {
     private string logStr = "";
     private string pathStr = "";
     private string testCollision = "";
-    public string separator = ";";
+    public string separator = ",";
 
     public Tasks currentTask;
     float totalTime =0.0f;
