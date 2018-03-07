@@ -105,7 +105,7 @@ Shader "Custom/Simple Billboard"
 					
 					
 					//float size = (p[0].pos.z*_Size)/351.00146192  ;
-					float size = 0.014;
+					float size = 0.028;
 					float halfS = 0.5f * size;
 
 							
