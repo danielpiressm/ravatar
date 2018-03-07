@@ -58,6 +58,7 @@ public class BodyHandler : MonoBehaviour {
     GameObject[] bodyPartsGO;
     GameObject[] jointSpheresGO;
 
+    public KeyCode startButton;
     public Material boneMaterial;
     public int numberOfStringsPerWrite = 500;
     public float timeBetweenWrites = 0.5f;
