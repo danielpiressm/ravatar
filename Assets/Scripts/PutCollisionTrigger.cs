@@ -23,6 +23,8 @@ public class PutCollisionTrigger : MonoBehaviour {
                 {
                     CollisionTrigger trigger = bCollider.gameObject.AddComponent<CollisionTrigger>();
                     trigger.Id = bCollider.transform.parent.name + "_" + bCollider.gameObject.name;
+                    trigger.name = trigger.Id;
+
                     bCollider.isTrigger = true;
                 }
                 else
@@ -30,6 +32,8 @@ public class PutCollisionTrigger : MonoBehaviour {
                     CollisionTrigger trigger = bCollider.gameObject.GetComponent<CollisionTrigger>();
                     trigger.Id = bCollider.transform.parent.name + "_" + bCollider.gameObject.name;
                     bCollider.isTrigger = true;
+                    trigger.name = trigger.Id;
+
                 }
             }
             foreach (MeshCollider mCollider in meshColliders)
@@ -40,6 +44,8 @@ public class PutCollisionTrigger : MonoBehaviour {
                     trigger.Id = mCollider.transform.parent.parent.name + "_" + mCollider.transform.parent.name;
                     mCollider.inflateMesh = true;
                     mCollider.isTrigger = true;
+                    trigger.name = trigger.Id;
+
                 }
                 else
                 {
@@ -47,9 +53,11 @@ public class PutCollisionTrigger : MonoBehaviour {
                     trigger.Id = mCollider.transform.parent.parent.name + "_" + mCollider.transform.parent.name;
                     mCollider.inflateMesh = true;
                     mCollider.isTrigger = true;
-                }
-            }
+                    trigger.name = trigger.Id;
 
+                }
+
+            }
         }
 
         

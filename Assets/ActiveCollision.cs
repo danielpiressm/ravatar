@@ -26,6 +26,14 @@ public class ActiveCollision
         this.first = first;
     }
 
+    public ActiveCollision(string jointName, float timeInit, bool first,Tasks task)
+    {
+        this.jointName = jointName;
+        this.timeInit = timeInit;
+        this.first = first;
+        this.task = task;
+    }
+
     public ActiveCollision(string jointName, float timeInit)
     {
         this.jointName = jointName;

@@ -63,6 +63,7 @@ public class TestTask : MonoBehaviour {
     float timeCollidingWithStuff = 0.0f;
     Dictionary<Tasks,float> timeCollidingWithStuffPerTask;
     Dictionary<Tasks, float> collisionCountPerTask;
+    Dictionary<Tasks, List<FinishedCollision>> finishedCollisionsPerTask;
 
     bool passedOnTrigger2 = false;
 
@@ -176,10 +177,12 @@ public class TestTask : MonoBehaviour {
 
         timeCollidingWithStuffPerTask = new Dictionary<Tasks, float>();
         collisionCountPerTask = new Dictionary<Tasks, float>();
+        finishedCollisionsPerTask = new Dictionary<Tasks, List<FinishedCollision>>();
         for(int j = 0; j < (int) Tasks.Completed;j++)
         {
             timeCollidingWithStuffPerTask.Add((Tasks)j, 0);
             collisionCountPerTask.Add((Tasks)j, 0);
+            finishedCollisionsPerTask.Add((Tasks)j, new List<FinishedCollision>());
         }
 
         GameObject.Find("triggerObject1").GetComponent<BoxCollider>().enabled = false;
@@ -211,6 +214,7 @@ public class TestTask : MonoBehaviour {
         
         if(Input.GetKeyDown(KeyCode.S))
         {
+            print("activating test");
             GameObject.Find("triggerObject1").GetComponent<BoxCollider>().enabled = true;
             GameObject.Find("triggerObject2").GetComponent<BoxCollider>().enabled = true;
         }
@@ -257,16 +261,18 @@ public class TestTask : MonoBehaviour {
 
     void CompleteReport()
     {
-        Debug.Log("cheguei aqui");
+        Debug.Log("@@@@ Completing Report @@@@");
         logStr +=  totalTime+"\n";
         
         System.IO.File.WriteAllText( pathDirectory+"/"+logFileName + ".csv" , logStr);
 
+        int objectsCollidedPerTask = 0;
 
         collisionLogStr += "!ObjectsCollided," + finishedCollisions.Count + ",TotalTimeCollided(s)," + timeCollidingWithStuff + "\n";
         for (int i = 0; i < timeCollidingWithStuffPerTask.Count; i++)
         {
-            collisionLogStr += "@Task," + (Tasks)i +  ",CollisionCount," + collisionCountPerTask[(Tasks)i] + ",TotalTimeCollided(s)," + timeCollidingWithStuffPerTask[(Tasks)i] + "\n";
+            objectsCollidedPerTask = finishedCollisionsPerTask[(Tasks)i].Count;
+            collisionLogStr += "@Task," + (Tasks)i +  ",CollisionCount," + collisionCountPerTask[(Tasks)i] + ",NumberObjectsCollided,"+ objectsCollidedPerTask + ",TotalTimeCollided(s)," + timeCollidingWithStuffPerTask[(Tasks)i] + "\n";
         }
 
 
@@ -376,7 +382,7 @@ public class TestTask : MonoBehaviour {
         if (triggerId == "walkTrigger1")
         {
             startTime = Time.realtimeSinceStartup;
-            Debug.Log("starting counter");
+            Debug.Log("##### starting counter #####");
         }
             
         //Start the counter
@@ -498,10 +504,47 @@ public class TestTask : MonoBehaviour {
 
                     if (activeCollisions[colliderName].Count == 0)
                     {
-                        finishedCollisions.Add(finishedCollisionsAux[colliderName]);
+                        bool foundInTasksList = false;
+                        bool foundInGeneralList = false;
+                        for(int j = 0; j < finishedCollisions.Count;j++)
+                        {
+                            FinishedCollision aux = finishedCollisions[j];
+                            //se ele ja tiver colidido com aquele objecto :-)
+                            if (aux.colliderName.Equals(colliderName))
+                            {
+                                foundInGeneralList = true;
+                                break;
+                            }
+                            else
+                            {
+                                foundInGeneralList = false;
+                            }
+                        }
+                        for (int j = 0; j < finishedCollisionsPerTask[currentTask].Count; j++)
+                        {
+                            FinishedCollision aux = finishedCollisionsPerTask[currentTask][j];
+                            //se ele ja tiver colidido com aquele objecto :-)
+                            if (aux.colliderName.Equals(colliderName))
+                            {
+                                foundInTasksList = true;
+                                break;
+                            }
+                            else
+                            {
+                                foundInTasksList = false;
+                            }
+                        }
+                        if(!foundInTasksList)
+                            finishedCollisionsPerTask[currentTask].Add(finishedCollisionsAux[colliderName]);
+                        if(!foundInGeneralList)
+                            finishedCollisions.Add(finishedCollisionsAux[colliderName]);
+                        //finishedCollisionsPerTask[currentTask].Add(finishedCollisionsAux[colliderName]);
 
                         timeCollidingWithStuff += (finishedCollisionsAux[colliderName].finishTime - finishedCollisionsAux[colliderName].startTime);
                         timeCollidingWithStuffPerTask[currentTask] += (finishedCollisionsAux[colliderName].finishTime - finishedCollisionsAux[colliderName].startTime);
+
+                        
+
                         //finishedCollisions.FindIndex()
                         //finishedCollisionsAux[colliderName] = null;
                         finishedCollisionsAux.Remove(colliderName);
